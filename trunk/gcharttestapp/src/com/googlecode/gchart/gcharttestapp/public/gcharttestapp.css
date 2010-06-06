@@ -1,0 +1,53 @@
+/* stylesheet used to test GChart's style-related features */
+
+
+/* styles attached to default stylename (pasted from javadoc example)*/
+
+.gchart-GChart {
+   background-color: white;   /* setBackgroundColor("white"); */
+   border-width: 1px;         /* setBorderWidth("1px"); */
+   border-color: black;       /* setBorderColor("black"); */ 
+   border-style: solid;       /* setBorderStyle("solid");  */ 
+ }
+
+/* alternate stylename used only by TestGChart19.java */
+.gcharttestapp-TestGChart19 {
+   background-color: yellow;   
+   border-width: 50px;         
+   border-color: red;       
+   border-style: dotted;    
+}
+
+
+/* stylename used only by GChartExample18.java */
+.gchartestapp-GChartExample19-CurveEditingForm {
+   background-color: #DDF;   
+   border-width: 10px;         
+   border-color: black;       
+   border-style: solid;
+   border-width: 1px;    
+   padding: 10px;
+}
+
+/* With the standard GWT styles, IE has oversized buttons, list box items, 
+   and oversized popup dialog on the pie chart example.
+
+   This extra CSS patches these IE-specific CSS problems in the standard GWT 
+   default stylesheets.
+*/
+
+* html table td {
+  font-family: Arial Unicode MS, Arial, sans-serif;
+  font-size: 0.8em; 
+}
+* html .gwt-Button {
+  font-size: 0.8em; 
+}
+* html .gwt-ListBox {
+  font-size: 1em;   
+}
+
+* html .gwt-DialogBox table td {
+  font-size: 0.8em;   
+}
+

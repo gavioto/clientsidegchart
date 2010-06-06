@@ -1,0 +1,327 @@
+
+<html><head>
+<title>GChart 2.1 Performance, Features, Incompatibilities and Bugfixes</title>
+
+<style>
+         body {
+            background-color: white;
+            color: black;
+            margin: 20px;
+            font-family: Arial, sans-serif;
+         }
+  
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<span style="float: right;">
+<small>For downloads, demos, and more
+visit the</small><br><a
+href="http://clientsidegchart.googlecode.com" target="_top"><big><b>
+Client-side GChart Home Page</b></big></a>
+</span>
+
+<h3>GChart 2.1 Performance, Features, Incompatibilities and
+Bugfixes</h3>
+<p>
+<ol>
+<h4> <li>Yes, GChart 2.1 <i>really is</i> an order of magnitude
+faster for many usage scenarios. But...</h4>
+
+<p>
+<ul>
+
+ <b><li>Caveat #1:</b> The very first update, GChart has to
+create and add the GWT widgets used to represent the chart.
+Therefore, this update is generally about <b>5 times slower</b>
+than subsequent re-updates, where you are just changing the data
+displayed on the chart, and where GChart can just re-purpose the
+widgets it created the last time. <b><i>Most of the performance
+improvements of this release do not make this very first update
+any faster.</i></b>.  <p>
+
+<b><li>Caveat #2:</b> The claim of 10 times faster is based on a
+single chart (the oil price simulation chart of the live demo)
+run on a single client environment (mine: 1.4GHz Windows XP
+laptop, Firefox 2 <i>with Firebug completely disabled via the
+Add-ons menu</i>. Firebug slows updates manyfold, though it
+slowed the old version more than the new.). The update times for
+that test were: 640ms for GChart 2.0 vs 60ms for GChart 2.1.
+Though that chart is a reasonable one to use for performance
+tuning (it contains a combination of bar, line, and pie based
+chart elements) <i>performance can vary substantially from chart
+to chart and between client environments.</i> <p>
+
+</ul>
+
+<p>
+For additional information about Client-side GChart performance, see <a href="tipsformakingupdatesfaster.html">Tips For Making
+Client-side GChart 2.1 Updates Faster</a>.
+
+<h4> <li>New Features</h4>
+<p>
+  <ul>
+   
+    <b><li>addTick now accepts HTML and Widgets</b>
+<p>
+The original addTick method now lets you use HTML and even
+GWT Widgets to define the tick label. Want clickable tick
+labels? Just pass in a Button instead of a String.
+
+    <b><li>setAnnotationText now supports HTML, and
+there's a new setAnnotationWidget method, too.</b>
+<p>
+
+Why should tick labels have all the fun? Want to make something
+happen when they mouse over a point? Just add a <tt>Widget</tt>
+that sources mouse events (e.g., via <tt>new
+Image("clear.cache.gif")</tt>) as that point's annotation, center
+it over the point with
+<tt>setAnnotationLocation(AnnotationLocation.CENTER)</tt>, and
+attach an appropriate <tt>MouseListener</tt>.
+
+    <b><li>setTicksPerGridline method added</b><p>
+  This new method lets you have gridlines on every other tick if you
+  want, or every third tick, etc.
+  <p>
+
+    <b><li>setImageUrl and setPlotAreaImageURL
+added</b>
+<p>
+The first method lets you use a custom image to define the
+rendered symbols on a curve.
+<p>
+Similarly, the second method lets you define a custom image for the
+plot area's background (the plot area is that rectangular region,
+bordered by x and y axes, where your curves are rendered).
+
+    <b><li>setOptimizeForMemory added</b>
+<p>
+By default, if GChart has leftover Widgets from the previous
+update it no longer needs to render your chart, it holds onto
+them in the expectation that they may be needed in some future
+chart update. That can be faster.
+<p>
+Pass true to this method, though, and GChart immediately frees up
+any such unused Widgets. That can be slower, but it can also
+save memory.
+<p>
+    <b><li>There's now a <tt>NONE</tt> <tt>SymbolType</tt></b>
+<p>
+To simplify the creation of annotation-only curves, this new
+symbol type, which does not display any symbol at all, was added.
+<p>
+
+  </ul>
+
+
+<p>
+
+<h4><li>Incompatibilities with the Previous Version</b></h4>
+<p>
+
+When I compiled my old test set with GChart 2.1, there were only
+one or two trivial changes I needed to make to get it to run.
+With luck, your application will work completely without
+incident. But if it doesn't "just work", to the best of my
+knowledge, it will be due to one of the easily-worked-around
+incompatibilities listed below:
+<p>
+<ul> 
+
+    <b><li>GChart.Point is now called GChart.Curve.Point</b>
+<p>
+
+I found while implementing the performance improvements, it would
+be very convenient if each point knew what curve it was on. So I
+made <tt>Point</tt> an inner class of <tt>Curve</tt>. It seemed
+like a good idea at the time.
+
+<p>
+What I overlooked was that anyone that had some lines of
+code such as:
+<pre>
+
+  GChart.Point p = getCurve(0).getPoint(0);
+  p.setAnnotationText("I am point 0 of curve 0. I am number one!");
+
+</pre>
+Will now need to replace them with:
+
+<pre>
+  GChart.Curve.Point p = getCurve(0).getPoint(0);
+  p.setAnnotationText("I am point 0 of curve 0. I am number one!");
+</pre>
+<p>
+
+I considered adding an explicit parent curve reference and
+reverting back to <tt>GChart.Point</tt> so you would not have to
+do this, but since points cannot ever exist independent of their
+associated curve, I decided to stick with <tt>
+GChart.Curve.Point</tt>.
+
+<p>
+    <b><li>Deprecated GChart 1.0 XXX and YYY hovertext template keywords dropped</b>
+<p>
+
+These were deprecated in 2.0 and were removed in 2.1 to simplify
+and speed up the hovertext processing.
+
+<p>
+
+Workaround: In the String argument passed to
+<tt>Symbol.setHovertextTemplate</tt>, replace each XXX with
+<tt>${x}</tt> and each YYY with <tt>${y}</tt>. 
+
+    <b><li>Charts take up more memory now</b>
+<p>
+
+To make chart updates faster, GChart needs to
+keep track of what changed and what didn't and that requires an
+extra int, String reference, etc. per element/attribute tracked. The
+test set takes up less than 1MB per chart, on average, so I don't
+expect this to be a significant issue for most applications,
+which will likely run short on time long before they run short on
+memory. To get a sense of how much memory a 500 point GChart
+uses, open up Windows Task Manager (or the Mac or linux equivalent
+thereof) before you visit the GChart live demo.
+
+<p>
+
+    <b><li>GChart no longer auto-prefetches its image files</b>
+<p>
+
+If you use an image URL on one of your charts, you may have to
+prefetch it yourself. Auto-prefetching sounds nice, but
+I've read incorrect use of <tt>Image.prefetch</tt> can cause
+memory leaks so I didn't want to automatically do something that
+might do that. Besides, prefetching is one of those things you
+should do when a page first loads, and since you can change
+GChart's image URLs at any time, it's impossible for GChart to
+know what images it may need to prefetch at that time.
+
+<p>
+
+If an image GChart uses (that would be either the default
+<tt>gchart.gif</tt> or an image you passed into GChart's
+<tt>setBlankImageURL</tt>, <tt>setImageURL</tt>, or
+<tt>setPlotAreaImageURL</tt> methods) isn't coming up as smoothly
+as you'd like it to, consider issuing an Image.prefetch on the
+image in question when your application first loads into the page.
+
+<p>
+    <b><li>Positioning of tick labels around pie slices has
+changed (very) slightly</b>
+<p>
+
+The algorithm is just a little bit better. If the new
+positions bother you, use setAnnotationXShift and
+setAnnotationYShift to tweak them back to where you think they
+should be.
+<p>
+
+<b><li> It's unlikely, but hovertext may come up too slowly</b>
+<p>
+
+As of 2.1, hovertext isn't actually added until the mouse
+hovers over the HTML element in question.  In previous versions,
+the <tt>setTitle</tt> method was called at chart update time,
+regardless of if any hovering was ever done. The new method
+speeds updates, since formatting the numbers in the hovertext is
+surprisingly expensive.
+
+<p>
+
+However, on pages so busy (or in browsers so inept--I'm talking
+about you, IE6) that the browser
+has trouble figuring out exactly what the mouse is hovering over,
+your hovertext might appear to disappear (it's actually just very
+slow in coming up). If your page is that busy, disappearing
+hovertext is probably the least of your worries.
+
+<li> <b>Auto-determined axis limits not always the same if
+you have any invisible curves.</b>
+<p>
+
+Past versions incorrectly included invisible curves in determining
+the min/max data points for defining auto-computed axis limits
+(when min or max are Double.NaN). This version excludes those
+hidden curves from such calculations, which means that
+auto-determined axis limits could be narrower if you used
+setVisible(false) on any of your curves.  <p>
+
+If your application relied on the old behavior, the easiest fix
+is to explicitly define the axis min and max to whatever you
+think is appropriate.
+
+</ul> 
+
+
+<p>
+
+ <h4><li>Bugfixes</h4>
+<ul> 
+
+<li> In previous versions, a point's hovertext could
+inappropriately display the hovertext associated with an adjacent
+point's annotation. This happened because the "mouse
+capture rectangle" around annotations was larger than the actual
+annotation. In this version, that "mouse capture rectangle" is
+exactly the same size as the annotation, so such inappropriate
+"hovertext occlusion" is no longer a problem.
+
+<p>
+
+<li> A bug that could cause default pie slice orientations to not
+increase appropriately so as to leave enough space for the
+"missing slice" when pie slices had <tt>Double.NaN</tt>
+(undefined) x or y values has been corrected.
+
+<p>
+
+<li>Improved placement of "dots" connecting discrete points
+places them more nearly on their ideal line. In direct
+consequence, spacing of dots <i>along</i> the line is slightly
+more irregular, but you tend not to notice that as much. Anyway,
+it looks quite a bit better, check out, for example,
+GChartExample03.
+<p>
+
+<li>Similarly, the tops of vertical bars, and the right and
+left edges of horizontal bars, and the appropriate edges
+of box-type symbols, now align exactly with any gridlines
+that represent the same position as the symbol does. In
+previous versions, they could be off by a pixel from
+such exact alignment.
+<p>
+
+<li> A bug that caused axis labels to not be removed from the
+chart if they were set to <tt>null</tt> after having been
+non-<tt>null</tt> in a previous update is fixed. Setting an axis
+label to <tt>null</tt> now removes any previous axis label.
+<p>
+
+<li> A bug that caused curves marked as non-visible to be
+displayed anyway has been corrected. Invisible curves
+are now actually invisible.
+<p>
+
+<li> Harmless but completely useless "garbage files"
+inadvertently placed into the gchart.jar in the previous release
+have been eliminated. 
+
+</ul>
+
+</ol>
+
+</body>
+
+</html>
+
+

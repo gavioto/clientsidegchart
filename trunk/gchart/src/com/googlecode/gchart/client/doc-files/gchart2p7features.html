@@ -1,0 +1,492 @@
+
+<html><head>
+<title>Client-side GChart 2.7 Release Notes</title>
+
+<style>
+         body {
+            background-color: white;
+            color: black;
+            margin: 20px;
+            font-family: Arial, sans-serif;
+         }
+  
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<span style="float: right;">
+<small>For downloads, demos, and more
+visit the</small><br><a
+href="http://clientsidegchart.googlecode.com" target="_top"><big><b>
+Client-side GChart Home Page</b></big></a>
+</span>
+<small><small>
+All contributions, conceptual or practical, psuedo or fully
+coded, gratefully acknowledged and properly documented. 
+</small></small>
+
+
+<h3>Client-side GChart 2.7 Release Notes</h3> <p> 
+
+<b>First, a special security-breach-related notice</b>
+<p>
+<blockquote>
+<i>"Ask not what is the weakest link. It's clicked by you." -- Bruce Bellatollis</i>
+</blockquote>
+
+
+The laptop I used to build and upload previous releases was "owned"
+(rootkitted) by an attacker for an unknown period of time.
+My best guess is that a "drive by download" initiated
+by clicking on what I believed to be a legit GChart-related link was
+responsible. Regardless of how it happened, once the attacker had the
+ability to remotely control the machine that built, administered, and
+released GChart, they could in principle have, say, injected Trojans
+into my releases. It's bad to be owned. Fortunately, I have not seen any
+specific evidence that the project's on-line artifacts were tampered
+with in a manner dangerous to GChart users. Knock wood.
+
+<p>
+
+To help eliminate such uncertainties and prevent future breaches, this
+release contains substantial security-related improvements, including:
+
+<ol>
+
+
+<li> GChart 2.7 is now hosted in a brand new Google Code project at
+<a
+href="http://clientsidegchart.googlecode.com">http://clientsidegchart.googlecode.com</a>, using brand new Google
+accounts. I've repudiated both the previous project
+(<tt>http://gchart.googlecode.com</tt>) and the Google id
+(<tt>johncurtisgunther</tt>).
+used previously to administer that project
+The java package name is still based on the old URL, so you
+won't have to change your imports.
+ 
+
+<li>I've reviewed all source code, build scripts and HTML from the
+trunk of the previous project for evidence of changes that could be
+dangerous to GChart users (I didn't find any).  Except for the PNG
+screen shots, which I just assumed were OK, the new project was built
+only from such checked sources.
+
+<li>GChart point releases are now built on a development system whose
+internet access is carefully controlled. This change is intended to
+prevent the "click on a bad link, project is compromised" scenario
+that I believe did us in the last time.
+
+<li>All point releases are now gpg (Gnu Privacy Guard) signed on an
+<a
+href="http://www.apache.org/dev/release-signing.html#isolated-installation">isolated installation</a>.
+Over time, this will give GChart user's an additional, independent,
+way to verify that the same guy who made all past releases is making
+the next one.  
+
+<li>I've set up three distinct GChart related Google accounts, with
+owner, committer, and contributor priviledges, respectively. Fewer
+owner account logins implies fewer opportunities to grab the owner
+password.
+
+
+ </ol>
+
+Though I can't say GChart will never be hacked again, I'm reasonably
+sure that, thanks to these changes, it is at least <i>not any
+easier</i> to compromise GChart than it would be to compromise a
+typical, competing, GWT chart library. And, of course, those with very
+stringent security requirements can always review GChart's 3,000 odd
+semicolon-terminated lines of Java for themselves, and simply
+incorporate that code directly in their own projects.  <p>
+
+
+
+<i>So, besides working to assure we actually get the code
+you wrote when we download the product (great feature, but we assumed
+you already had that one before) what's new in GChart 2.7?</i>
+Well, there are a few actual <i>features</i>--read on.
+<p>
+
+<b>Overview of GChart 2.7 improvements</b>
+<p>
+
+The main purpose of the improvements of this release is to facilitate
+the creation of interactive charts (e.g. mouse driven pan and zoom) as
+illustrated in the
+<a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_7/com.googlecode.gchart.gchartdemoapp.GChartDemoApp/GChartDemoApp.html">
+live demo's</a> updated LayZLine&trade; chart editor, and to
+facilitate the creation of charts with curvy (Bezier) connecting
+lines (c.f. the live demo's oil price simulation chart)  <p>
+
+GChart still does not natively support such features. Instead, this
+release adds a small set of helper features, such as support for all
+of GWT's mouse-event-handling interfaces and the ability to quickly
+translate each previously rendered curve. As the live demo illustrates, such
+features make it possible for you to implement drag-to-pan, curvy
+connecting lines, and similar advanced features efficiently.
+
+<p>
+
+This approach of "externalizing" (essentially, placing them into
+example code) such features keeps GChart simpler, gives you more
+flexibility, and saves me a heck of a lot of work.  <p>
+
+The Bezier curve functionality is realized by implementing the
+<tt>lineTo</tt> and related method of the <tt>GChartCanvasLite</tt> interface
+so that they draw curvy, rather then straight, point-to-point
+connecting lines using <tt>GWTCanvas.cubicCurveTo</tt> and related
+methods.
+<p>
+
+Finally, this release adds the ability to reposition or replace
+(c.f. <tt>setLegendLocation</tt>, <tt>setLegend</tt>) a chart's
+legend, and several bugfixes.
+<p>
+
+<b>Detailed change log:</b>
+
+<ol>
+
+<h4><li>A GChart now implements all the standard GWT mouse related
+interfaces.
+</h4>
+<p>
+
+Specifically, in addition to the previously supported
+<tt>HasClickHandlers</tt> a GChart now also implements
+<tt>HasDoubleClickHandlers, HasMouseDownHandlers,
+HasMouseMoveHandlers, HasMouseOutHandlers, HasMouseOverHandlers,
+HasMouseUpHandlers,</tt> and <tt> HasMouseWheelHandlers</tt>.
+<p>
+
+The new methods <tt>addDoubleClickHandler, addMouseDownHandler,
+addMouseMoveHandler</tt>, etc. implement these interfaces.
+
+
+
+<h4><li>New Legend Positioning Features</h4>
+
+Previous versions always placed the chart legend to the right of the
+chart, centered vertically.
+<p>
+
+With this release, you can use the new <tt>setLegendLocation</tt>
+method, passing it one of the following predefined
+<tt>LegendLocations</tt>:
+<tt>INSIDE_BOTTOM</tt>,
+<tt>INSIDE_BOTTOMLEFT</tt>,
+<tt>INSIDE_BOTTOMRIGHT</tt>,
+<tt>INSIDE_LEFT</tt>,
+<tt>INSIDE_RIGHT</tt>,
+<tt>INSIDE_TOP</tt>,
+<tt>INSIDE_TOPLEFT</tt>,
+<tt>INSIDE_TOPRIGHT</tt>,
+<tt>OUTSIDE_LEFT</tt>, and
+<tt>OUTSIDE_RIGHT</tt>
+<p>
+
+Finally, the new <tt>setLegendXShift</tt> and <tt>setLegendYShift</tt>
+methods let you fine-tune the legend positions via pixel-based shifts
+away from these initial "base" positions.
+
+<h4><li>New <tt>setLegend</tt> method</h4>
+
+GChart's built-in legend is always a single column table, and the
+exact way that legend is formatted is fairly simplistic and thus
+may not be appropriate for all applications.
+<p>
+
+To help you workaround such limitations, the new <tt>setLegend</tt>
+method lets you replace the built-in legend with a Widget of your own
+creation.  Positioning options (see above) work exactly the same as
+for a built-in Legend. In fact, I suspect that a small GChart with an
+appropriately annotated one or two point curve corresponding to each
+curve on the main chart can serve as a much improved GChart Legend.
+
+
+<h4><li>Axis.setOutOfBoundsMultiplier methods</h4>
+
+While implementing the pan and zoom feature of the live demo, it was
+discovered that attempting to rendering points far off the plot area
+(as can occur when you are zoomed in entirely) could cause some
+browsers to get into the "not responding" state. I suspect that, if
+you attempt to draw curvy connecting lines to points placed way
+outside the plot area some browsers (VML's lack of support becomes
+painfully obvious in such cases) just can't handle the math or
+something.  <p>
+
+To workaround this problem, GChart now allows you to set hard limits
+(expressed in multiples of the plot area's pixel dimensions)
+beyond which points are simply dropped without being rendered at all.
+<p>
+
+Note that GChart by default renders such points and (when you have
+requested it) clips the so rendered points to the plot area. Though
+this default behavior is more accurate (since connecting lines to and
+from the far-off-the-plot-area points will still get rendered
+properly) it can be a lot slower if there are many such points.  <p>
+
+Applications that manipulate axis limits to show a subset of a large
+point set should be able to get a substantial performance boost by
+using this feature, since rather than rendering and then clipping to
+the visible region, the out-of-bounds points are simply ignored.
+<p>
+
+<h4><li>GChart now leaves space for non-zero axis label thickness
+settings even if there is no axis label.</h4>
+
+Previously, if there was no axis label, GChart did not leave space
+for an axis label, even if you explicitly set a non-zero axis label thickness.
+<p>
+
+With this release, explicitly setting a non-zero axis label thickness
+will cause GChart to leave the requested amount of space even if there
+is not actually any axis label specified.
+
+<h4><li>Bugfix: <tt>setTickLabelPadding</tt> no longer sometimes
+ignored.</h4>
+<p>
+
+In usage scenarios in which the tick label padding of an axis was specified
+<i>after</i> custom ticks were added, the tick label padding
+specification would be ignored. This bug is now fixed.
+
+<h4><li>Bugfix: <tt>setFontFamily</tt> now sets the <tt>font-family</tt>
+of GChart textual elements properly.</h4>
+<p>
+
+In previous releases, <tt>setFontFamily</tt> set the font family of the
+top-level GChart element, relying on the CSS cascade to thereby define
+the <tt>font-family</tt> of every lower level point annotation, tick label,
+legend label, title, or footnote.
+<p>
+
+This didn't always work. But, the problem only became obvious (and
+serious) after GWT introduced default stylesheets ("themes") that
+defined the font-family of the <tt>td</tt> element. Since GChart
+places all textual elements within tables to facilitate alignment, the
+<tt>td</tt> styling in these new, default, GWT stylesheets
+short-circuited the CSS cascade, and the GChart <tt>setFontFamily</tt>
+setting was ignored.  <p>
+
+To correct this problem, GChart now makes the <tt>font-family</tt> setting at
+the <tt>td</tt> level, which overrides any stylesheet-based
+<tt>font-family</tt> settings that may be in effect. The CSS cascade
+can be tricky so there are likely still CSS settings that could cause
+<tt>font-family</tt> to get overridden inappropriately, but I think you would
+have to work a bit to make it happen now.
+<p>
+
+This bug corrects GChart issue #42. Much thanks to the person who reported
+this problem.
+<p>
+
+<h4><li>Finer-grained font-family control.</h4>
+
+Because (see above) <tt>font-family</tt> stylings are now applied at a lower
+level, more fine-grained control over <tt>font-family</tt> became easy to do.
+So, we added new methods <tt>setTickLabelFontFamily</tt>,
+<tt>setAnnotationFontFamily</tt>, and <tt>setLegendFontFamily</tt> to
+give you such control.
+
+<p>
+
+Note that if you just want to define a single <tt>font-family</tt> for
+all text on the chart you don't need to bother with these methods.
+Whenever these more fine-grained <tt>fontFamily</tt> properties are
+<tt>null</tt> (their default), the top-level <tt>fontFamily</tt>
+setting made via <tt>theGChart.setFontFamily</tt> is automatically used
+at the lower level.  <p>
+
+Finally, if you prefer to use the CSS cascade exclusively to define
+<tt>font-family</tt> (in general, you'll have to modify any explicit
+<tt>td</tt> or similar <tt>font-family</tt> stylings if you take this route) just
+use <tt>theGChart.setFontFamily(GChart.USE_CSS)</tt> and leave these
+new, finer-grained, <tt>fontFamily</tt> properties at their default
+value (<tt>null</tt>).
+
+<h4><li>New <tt>Curve.setXShift, Curve.setYShift</tt></h4>
+
+These methods let you translate previously rendered curve content,
+without having to actually rerender it. Instead, GChart merely
+translates the various panels (one for graphics, one for text) that
+contain the rendered curve--which is much faster.
+<p>
+
+For example, the LayZLine&trade; chart editor in the live demo uses
+these methods to provide near-instantaneous "drag feedback".
+Initially, we tried to implement this feature by simply re-rendering
+the entire chart after shifting each point's position appropriately.
+Though that also "worked" it was too slow to produce the illusion of
+direct manipulation.
+<p>
+
+Another potential application for this new feature is animations (a
+"flying pie chart" demo is waiting in the wings). 
+
+
+<h4><li>New <tt>Curve.setClipToPlotArea, Curve.getClipToPlotArea,
+Curve.getClippedToPlotArea</tt>  methods</h4>
+<p>
+
+Earlier GChart versions supported only a single, chart-wide,
+<tt>clipToPlotArea</tt> attribute: either all curves were clipped to
+the plot area, or none of them were.  <p>
+
+That proved too restrictive for some applications. For example, most
+curves on the live demo's LayZLine&trade; chart editing example are
+clipped to the plot area. But its help system is implemented via popup
+hover text associated with a single-point curve placed outside of the
+plot area--so this "hover-help" curve must <i>not</i> be clipped to
+the plot area.
+
+<p>
+
+The previous, chart-wide, attribute is now the default for any curves that
+don't explicitly set their own <tt>clipToPlotArea</tt> attribute.
+
+
+<h4><li>New <tt>Curve.invalidateRendering</tt></h4>
+
+This method can be used to explicitly force GChart to rerender a
+curve, even if none of the curve's managed properties have changed.
+<p>
+
+Previously, you had to make a "do nothing" change to the curve's
+properties to force such an update.
+
+
+<h4><li>New <tt>setCurveData</tt>,
+<tt>getCurveData</tt>, <tt>getCurrentCurveData</tt> methods</h4>
+
+The <tt>setCurveData/getCurveData</tt> methods give you a generic object
+reference for each curve. 
+<p>
+
+The getCurrentCurveData method allows you to retrieve this reference
+from within code you write to implement GChart's
+<tt>GChartCanvasLite</tt>
+interface (used to plug GChart into an external GWT vector graphics
+library such as GWTCanvas).
+<p>
+
+The oil price simulation chart of the live demo uses this feature to
+retrieve a "tension" parameter it needs to define the "curvyness"
+of connecting lines.
+
+
+<h4><li>setMaxCanvasPixels</h4>
+
+This method allows you to artificially limit the total number of
+pixels in any rendering canvas.
+<p>
+
+It was found empirically that some browsers behave unpredictably if
+the total number of pixels on a rendering canvas gets too large. In
+addition, large rendering canvases can use inordinate amounts of
+memory in Firefox. This method was added to make it easy for you to
+workaround such problems without having to explicitly control the size
+of the rendering canvas, which is typically defined implicitly as the
+smalest rectangle that can contain all of the rendered points of the
+associated curve.
+
+
+<h4><li>setRenderPaddingFactor</h4>
+
+This method allows you to force GChart to render a band around the
+perimeter of the plot area (to which rendered content is typically
+clipped), so that you can easily shift that extra swath of rendered
+content into view via the new <tt>Curve.setXShift</tt> and
+<tt>Curve.setYShift</tt> methods.  <p>
+
+By default, this factor is zero which leaves GChart free to drop
+off-the-clipping-region content, speeding rendering in the common
+case when such a "shift into view" functionality isn't required.
+<p>
+
+The live demo's LayZLine&trade; chart editor uses a render padding
+factor of 1.5 to allow the user to drag the chart 1.5 screenfuls in any
+direction without having to do an explicit curve redraw, thus
+creating the illusion of direct manipulation.
+
+
+<h4><li>setCanvasExpansionFactors</h4>
+
+Advanced applications may choose to implement a <tt>lineTo</tt>
+method that supports curvy, Bezier, connecting lines, as is
+illustrated in the live demo's LayZLine&trade; chart editor.
+<p>
+
+In such cases, the algorithm used to "shrink wrap" the canvas around
+a curve's point set won't always provide enough space for such curvy lines,
+because their curves can "overshoot" the smallest rectangle that
+contains the curve's point set.
+
+<p>
+
+This method allows you to expand the canvas rectangle a bit, so that
+such curvy connecting lines don't get clipped. This feature could
+possibly be useful for similar advanced applications, where the
+containing rectangle computed under the assumption of straight
+connecting lines isn't quite big enough to hold the
+vector-graphic-rendered content.
+
+<h4><li>Various small code and comment formatting changes</h4>
+
+Comments were in several non-standard formats, and the code itself
+wasn't always formatted consistently either, so I used the Eclipse
+auto-formatting facilities in an effort to make things more regular.
+<p>
+
+I also added <tt>@Override</tt> markers to various methods that lacked
+them previously.
+<p>
+
+</ol>
+<b>Some acknowledgements and a deprecation</b>
+<p>
+
+<blockquote><i>
+"I'd rather be a real person impersonating a fake expert than a fake person
+impersonating a real expert." -- Groucho Marx
+</i></blockquote>
+<p>
+
+For the curvy connecting lines, I have to thank the authors of <a
+href="http://www.jfree.org">jFreeChart</a>, since several pages of code
+written by them that implemented Bezier curve support was incorporated
+into a GChart example that was posted onto the GChart issue tracker by
+a person who claimed (even affixing his own copyright notice to the
+top) that he had written that code himself.
+<p>
+
+Though none of that jFreeChart code was used in my implementation, the
+fact that the jFreeChart authors had written it, and made it freely
+available, was materially important to the proof of concept for this
+feature.
+<p>
+
+The plagiarist of the jFreeChart code also posted example code that
+helped motivate changes in this release intended to make implementing
+pan and zoom type features easier. Though none of his code was used in
+GChart, his posts motivated these new features, and I gratefully
+acknowledge that.
+<p>
+
+But, it isn't fair to the authors of jFreeChart to copy several pages
+of their carefully crafted Bezier curve code and then claim that you
+wrote it yourself. I strongly deprecate this behavior. By engaging in
+it this person has lost the respect that his good suggestions would
+have otherwise entitled him to. So, while I'm flattered that someone
+with his level of skill took an interest in GChart, I request that he
+refrain from any future posts on our issue tracker.
+
+</body>
+
+</html>

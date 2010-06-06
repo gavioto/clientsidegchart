@@ -1,0 +1,129 @@
+
+<html><head>
+<title>GChart 2.3 Release Notes</title>
+
+<style>
+         body {
+            background-color: white;
+            color: black;
+            margin: 20px;
+            font-family: Arial, sans-serif;
+         }
+  
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<span style="float: right;">
+<small>For downloads, demos, and more
+visit the</small><br><a
+href="http://clientsidegchart.googlecode.com" target="_top"><big><b>
+Client-side GChart Home Page</b></big></a>
+</span>
+
+<h3>GChart 2.3 Release Notes</h3>
+<p>
+<ol>
+
+<h4> <li>Order of magnitude faster line charts via canvas**
+<br> <small><sub>**Canvas implementation not included. A canvas graphics library must be downloaded and
+interfaced separately.</sub></small></h4>
+
+This release adds a special symbol type that draws solidly connected
+line charts using a vector graphics (aka canvas) drawing library:
+<p>
+
+<ul>
+    <tt><b><li>SymbolType.LINE_CANVAS</b></tt>
+</ul>
+
+<p>
+
+Lines are typically drawn an order of magnitude faster (and also
+look a lot crisper) than with the original, HTML-element-based,
+<tt>LINE</tt> symbol type.
+
+<p> The catch is that, to assure that GChart can deliver on its
+promise of requiring only its ~2K lines of pure GWT-Java and the
+standard GWT libraries, GChart doesn't include an appropriate
+canvas facility for you. Instead, you have to "bring your own
+canvas" by implementing GChart's <tt>GChartCanvasLite</tt> and
+<tt>GChartCanvasFactory</tt> interfaces.  <p>
+
+For example code that illustrates how easy it is to do this,
+check out the source code of the <a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_3/com.googlecode.gchart.gchartdemoapp.GChartDemoApp/GChartDemoApp.html">updated
+live demo's sine/cosine curve</a>. This example shows how, with
+just a few lines of code, you can use the GWT incubator's
+<tt>GWTCanvas</tt> widget to give GChart the vector graphics
+capabilities it needs. Similar code should
+also work with other GWT vector graphics libraries, should you prefer
+one of them.<p>
+
+Note that if you never use any of GChart's canvas-powered symbol
+types (right now there's only <tt>LINE_CANVAS</tt>, but others
+are planned) you don't have to bother
+implementing these <tt>GChartCanvasLite</tt> and <tt>GChartCanvasFactory</tt>
+interfaces.  <p>
+
+Once GWT's standard libraries include a vector graphics
+capability, GChart will simply use that. So this interface
+approach is a stopgap until a standard GWT canvas library is
+added. There's an <a href=
+"http://code.google.com/p/google-web-toolkit/issues/detail?id=1554">issue
+on the GWT issue tracker</a> for such a standard graphics
+library. If you think this interface-only approach is a big
+hassle, please vote for ("star") this issue to help raise the
+priority of getting vector graphics into the standard GWT
+distribution.
+
+<p>
+
+Until then, you can get the canvas implementation I used in my
+demo and test chart by visiting the <a
+href="http://code.google.com/p/google-web-toolkit-incubator/">
+GWT incubator project</a> and using the <tt>GWTCanvas</tt> widget
+its <tt>gwt-incubator.jar</tt> contains. I used the most recent,
+GWT 1.5-required, incubator release.
+
+
+<h4> <li>GWT 1.5.2 tested (but not 1.4.62 tested, any more)</h4>
+
+The results of <a
+href="http://groups.google.com/group/Google-Web-Toolkit/browse_thread/thread/52c758b0caac34da/f4e47b997e00bce1?#f4e47b997e00bce1">
+this informal poll on the GWT
+Forum</a> revealed there was almost no value in a least common
+denominator approach of sticking with a GWT 1.4.62 compatible code
+base until all the 1.4.62 users died out because...they had
+almost all died out already.
+<p>
+
+Client-side GChart users who are still using 1.4.62 are strongly
+urged to upgrade to 1.5.2 to assure they are working with the
+same version that we use for testing. Of course you can always
+just keep using the last 1.4.62 tested GChart (v2.2) but then you
+miss out on the latest features/upgrades/bugfixes. Plus, your
+charts will draw faster (rougly 10% speedups were observed in
+informal testing) if compiled with 1.5.2.
+
+<p>
+
+Sorry if you still need 1.4.62 compatibility. My original
+inclination was to maintain backward compatibility with 1.4.62,
+but given the very rapid migration to 1.5.2 among GWT
+developers, it just didn't seem like it was worth the effort.
+
+</ol>
+
+
+
+</body>
+
+</html>
+
+

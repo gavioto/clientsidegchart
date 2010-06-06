@@ -1,0 +1,192 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /* Copyright 2007,2008,2009 John C. Gunther<a name="line.1"></a>
+<FONT color="green">002</FONT>     * <a name="line.2"></a>
+<FONT color="green">003</FONT>     * Licensed under the Apache License, Version 2.0 (the<a name="line.3"></a>
+<FONT color="green">004</FONT>     * "License"); you may not use this file except in compliance<a name="line.4"></a>
+<FONT color="green">005</FONT>     * with the License. You may obtain a copy of the License at:<a name="line.5"></a>
+<FONT color="green">006</FONT>     * <a name="line.6"></a>
+<FONT color="green">007</FONT>     *  http://www.apache.org/licenses/LICENSE-2.0<a name="line.7"></a>
+<FONT color="green">008</FONT>     *<a name="line.8"></a>
+<FONT color="green">009</FONT>     * Unless required by applicable law or agreed to in writing,<a name="line.9"></a>
+<FONT color="green">010</FONT>     * software distributed under the License is distributed on an<a name="line.10"></a>
+<FONT color="green">011</FONT>     * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,<a name="line.11"></a>
+<FONT color="green">012</FONT>     * either express or implied. See the License for the specific<a name="line.12"></a>
+<FONT color="green">013</FONT>     * language governing permissions and limitations under the<a name="line.13"></a>
+<FONT color="green">014</FONT>     * License.<a name="line.14"></a>
+<FONT color="green">015</FONT>     */<a name="line.15"></a>
+<FONT color="green">016</FONT>    <a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    package com.googlecode.gchart.client;<a name="line.18"></a>
+<FONT color="green">019</FONT>    <a name="line.19"></a>
+<FONT color="green">020</FONT>    <a name="line.20"></a>
+<FONT color="green">021</FONT>    /**<a name="line.21"></a>
+<FONT color="green">022</FONT>     *<a name="line.22"></a>
+<FONT color="green">023</FONT>     * Translates parameter names into plain text or HTML snippets that<a name="line.23"></a>
+<FONT color="green">024</FONT>     * represent that parameter's value at a given, "hovered over", point.<a name="line.24"></a>
+<FONT color="green">025</FONT>     * &lt;p&gt;<a name="line.25"></a>
+<FONT color="green">026</FONT>     *<a name="line.26"></a>
+<FONT color="green">027</FONT>     * By passing an instance of a &lt;tt&gt;HoverParameterInterpreter&lt;/tt&gt; to<a name="line.27"></a>
+<FONT color="green">028</FONT>     * GChart's &lt;tt&gt;setHoverParameterInterpreter&lt;/tt&gt; method, you can teach<a name="line.28"></a>
+<FONT color="green">029</FONT>     * GChart how to expand custom parameters embedded in hovertext<a name="line.29"></a>
+<FONT color="green">030</FONT>     * templates (c.f. &lt;tt&gt;setHovertextTemplate&lt;/tt&gt;) in a manner analogous<a name="line.30"></a>
+<FONT color="green">031</FONT>     * to how it expands the built-in parameters &lt;tt&gt;${x}&lt;/tt&gt;,<a name="line.31"></a>
+<FONT color="green">032</FONT>     * &lt;tt&gt;$(y)&lt;/tt&gt;, and &lt;tt&gt;${pieSliceSize}&lt;/tt&gt;.  &lt;p&gt;<a name="line.32"></a>
+<FONT color="green">033</FONT>     *<a name="line.33"></a>
+<FONT color="green">034</FONT>     * &lt;small&gt;<a name="line.34"></a>
+<FONT color="green">035</FONT>     * &lt;i&gt;Note:&lt;/i&gt; You can also use a hover parameter interpreter to<a name="line.35"></a>
+<FONT color="green">036</FONT>     * override the built-in parameters, giving them a different meaning,<a name="line.36"></a>
+<FONT color="green">037</FONT>     * numeric format, etc., if you like. <a name="line.37"></a>
+<FONT color="green">038</FONT>     * &lt;/small&gt;<a name="line.38"></a>
+<FONT color="green">039</FONT>     * &lt;p&gt;<a name="line.39"></a>
+<FONT color="green">040</FONT>     * <a name="line.40"></a>
+<FONT color="green">041</FONT>     * The Chart Gallery chart below uses a custom hover parameter<a name="line.41"></a>
+<FONT color="green">042</FONT>     * interpreter that allows hover text to include the number (positional<a name="line.42"></a>
+<FONT color="green">043</FONT>     * index) of the curve that contains the hovered over point: &lt;p&gt;<a name="line.43"></a>
+<FONT color="green">044</FONT>     *<a name="line.44"></a>
+<FONT color="green">045</FONT>     * {@code.sample<a name="line.45"></a>
+<FONT color="green">046</FONT>     * ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample17.java}<a name="line.46"></a>
+<FONT color="green">047</FONT>     *<a name="line.47"></a>
+<FONT color="green">048</FONT>     * &lt;p&gt;<a name="line.48"></a>
+<FONT color="green">049</FONT>     * <a name="line.49"></a>
+<FONT color="green">050</FONT>     * Now, whenever the user hovers over a point on any curve, the curve<a name="line.50"></a>
+<FONT color="green">051</FONT>     * index, along with x,y coordinates, appears in the hover text. Here's<a name="line.51"></a>
+<FONT color="green">052</FONT>     * what the chart looks like when the user hovers over the last point<a name="line.52"></a>
+<FONT color="green">053</FONT>     * of the first curve:&lt;p&gt;<a name="line.53"></a>
+<FONT color="green">054</FONT>     * <a name="line.54"></a>
+<FONT color="green">055</FONT>     * &lt;img<a name="line.55"></a>
+<FONT color="green">056</FONT>     * src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample17.png"&gt;<a name="line.56"></a>
+<FONT color="green">057</FONT>     *<a name="line.57"></a>
+<FONT color="green">058</FONT>     * &lt;p&gt;<a name="line.58"></a>
+<FONT color="green">059</FONT>     * Note how, once defined, &lt;tt&gt;${curveNumber}&lt;/tt&gt; can be used in a<a name="line.59"></a>
+<FONT color="green">060</FONT>     * manner very similar to how the built-in parameters work. Some<a name="line.60"></a>
+<FONT color="green">061</FONT>     * applications may even allow end-users to edit/generate hover<a name="line.61"></a>
+<FONT color="green">062</FONT>     * template HTML that displays just the information they are<a name="line.62"></a>
+<FONT color="green">063</FONT>     * interested in.<a name="line.63"></a>
+<FONT color="green">064</FONT>     * &lt;p&gt;<a name="line.64"></a>
+<FONT color="green">065</FONT>     *<a name="line.65"></a>
+<FONT color="green">066</FONT>     * If you're looking for something that provides a more convincing<a name="line.66"></a>
+<FONT color="green">067</FONT>     * case for using a &lt;tt&gt;HoverParameterInterpreter&lt;/tt&gt;, <a name="line.67"></a>
+<FONT color="green">068</FONT>     * see<a name="line.68"></a>
+<FONT color="green">069</FONT>     * &lt;a<a name="line.69"></a>
+<FONT color="green">070</FONT>     * href="package-summary.html#GChartExample17a"&gt;this more realistically<a name="line.70"></a>
+<FONT color="green">071</FONT>     * complex example&lt;/a&gt;.<a name="line.71"></a>
+<FONT color="green">072</FONT>     * &lt;p&gt;<a name="line.72"></a>
+<FONT color="green">073</FONT>     * <a name="line.73"></a>
+<FONT color="green">074</FONT>     * &lt;i&gt;Tip:&lt;/i&gt; An easy way to format numeric custom parameters is via the<a name="line.74"></a>
+<FONT color="green">075</FONT>     * &lt;tt&gt;formatAsTickLabel&lt;/tt&gt; method, since tick label formats are<a name="line.75"></a>
+<FONT color="green">076</FONT>     * often appropriate for numeric hovertext values, too. Note that<a name="line.76"></a>
+<FONT color="green">077</FONT>     * the built-in hover parameters (&lt;tt&gt;${x}&lt;/tt&gt;, &lt;tt&gt;${y}&lt;/tt&gt;, etc.) use this approach.<a name="line.77"></a>
+<FONT color="green">078</FONT>     * &lt;p&gt;<a name="line.78"></a>
+<FONT color="green">079</FONT>     * <a name="line.79"></a>
+<FONT color="green">080</FONT>     * &lt;i&gt;Tip:&lt;/i&gt; If you need more control over the hover feedback than can<a name="line.80"></a>
+<FONT color="green">081</FONT>     * be provided by expanding parameter names embedded in an HTML template<a name="line.81"></a>
+<FONT color="green">082</FONT>     * string, consider using a &lt;tt&gt;HoverUpdateable&lt;/tt&gt; widget. You can<a name="line.82"></a>
+<FONT color="green">083</FONT>     * also use both techniques together by invoking<a name="line.83"></a>
+<FONT color="green">084</FONT>     * &lt;tt&gt;hoveredOverPoint.getHovertext&lt;/tt&gt;<a name="line.84"></a>
+<FONT color="green">085</FONT>     * from within your hover widget's &lt;tt&gt;hoverUpdate&lt;/tt&gt; method.<a name="line.85"></a>
+<FONT color="green">086</FONT>     *<a name="line.86"></a>
+<FONT color="green">087</FONT>     * @see GChart.Symbol#setHovertextTemplate setHovertextTemplate<a name="line.87"></a>
+<FONT color="green">088</FONT>     * @see GChart.Curve.Point#getHovertext getHovertext  <a name="line.88"></a>
+<FONT color="green">089</FONT>     * @see GChart.Axis#formatAsTickLabel formatAsTickLabel<a name="line.89"></a>
+<FONT color="green">090</FONT>     * @see HoverUpdateable HoverUpdateable<a name="line.90"></a>
+<FONT color="green">091</FONT>     * @see GChart#setHoverParameterInterpreter setHoverParameterInterpreter<a name="line.91"></a>
+<FONT color="green">092</FONT>     * @see GChart.Symbol#setBrushHeight setBrushHeight<a name="line.92"></a>
+<FONT color="green">093</FONT>     * <a name="line.93"></a>
+<FONT color="green">094</FONT>     */ <a name="line.94"></a>
+<FONT color="green">095</FONT>    public interface HoverParameterInterpreter {<a name="line.95"></a>
+<FONT color="green">096</FONT>    <a name="line.96"></a>
+<FONT color="green">097</FONT>       /**<a name="line.97"></a>
+<FONT color="green">098</FONT>        * Returns the value of the named parameter evaluated at the given<a name="line.98"></a>
+<FONT color="green">099</FONT>        * "hovered over" point. The string should be a plain text or HTML<a name="line.99"></a>
+<FONT color="green">100</FONT>        * snippet that will be substituted for any &lt;tt&gt;${&lt;/tt&gt;...&lt;tt&gt;}&lt;/tt&gt;<a name="line.100"></a>
+<FONT color="green">101</FONT>        * bracketed occurrences of the parameter in any hovertext template<a name="line.101"></a>
+<FONT color="green">102</FONT>        * string on any chart that uses this hover parameter interpreter.<a name="line.102"></a>
+<FONT color="green">103</FONT>        * &lt;p&gt;<a name="line.103"></a>
+<FONT color="green">104</FONT>        *<a name="line.104"></a>
+<FONT color="green">105</FONT>        * @param paramName the name of the custom parameter. The name must<a name="line.105"></a>
+<FONT color="green">106</FONT>        * begin with a letter (&lt;tt&gt;a,b,...z&lt;/tt&gt; or &lt;tt&gt;A,B,...Z&lt;/tt&gt;), and<a name="line.106"></a>
+<FONT color="green">107</FONT>        * be followed by a sequences of letters, digits (&lt;tt&gt;0,1,..,9&lt;/tt&gt;) or<a name="line.107"></a>
+<FONT color="green">108</FONT>        * underscores (&lt;tt&gt;_&lt;/tt&gt;).<a name="line.108"></a>
+<FONT color="green">109</FONT>        * <a name="line.109"></a>
+<FONT color="green">110</FONT>        * @param hoveredOver a reference to the point that the mouse<a name="line.110"></a>
+<FONT color="green">111</FONT>        *   centered brush is currently touching (hovering over).<a name="line.111"></a>
+<FONT color="green">112</FONT>        *   GChart will never invoke this method with a &lt;tt&gt;null&lt;/tt&gt;<a name="line.112"></a>
+<FONT color="green">113</FONT>        *   &lt;tt&gt;Point&lt;/tt&gt; reference.<a name="line.113"></a>
+<FONT color="green">114</FONT>        *   <a name="line.114"></a>
+<FONT color="green">115</FONT>        * @return a plain text or HTML snippet representing the value of the<a name="line.115"></a>
+<FONT color="green">116</FONT>        *   named parameter at the hovered-over point, or &lt;tt&gt;null&lt;/tt&gt; if<a name="line.116"></a>
+<FONT color="green">117</FONT>        *   this parameter interpreter does not recognize the given parameter<a name="line.117"></a>
+<FONT color="green">118</FONT>        *   name.<a name="line.118"></a>
+<FONT color="green">119</FONT>        *<a name="line.119"></a>
+<FONT color="green">120</FONT>        *<a name="line.120"></a>
+<FONT color="green">121</FONT>        * @see HoverParameterInterpreter HoverParameterInterpreter<a name="line.121"></a>
+<FONT color="green">122</FONT>        * <a name="line.122"></a>
+<FONT color="green">123</FONT>        */<a name="line.123"></a>
+<FONT color="green">124</FONT>       public String getHoverParameter(String paramName,<a name="line.124"></a>
+<FONT color="green">125</FONT>                                GChart.Curve.Point hoveredOver);<a name="line.125"></a>
+<FONT color="green">126</FONT>    }<a name="line.126"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

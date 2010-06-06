@@ -1,0 +1,397 @@
+<head>
+<title>GChart - Client-side chart facility for GWT</title>
+</head>
+<body>
+
+GWT charts <i>without</i> JSNI, browser add-ins, or server
+round-trips. The <a href="#ChartGallery">Chart Gallery</a>
+below provides example code and screen shots to help get you
+started.
+
+<p>
+
+GChart is implemented as the GWT module
+<tt>com.googlecode.gchart.GChart</tt>, packaged into the file
+<tt>gchart.jar</tt>. For detailed installation instructions
+see <a href="#InstallingGChart">Installing GChart</a> 
+<p>
+
+
+See the <a
+href="{@docRoot}/com/googlecode/gchart/client/doc-files/releasenotes.html">
+release notes</a> for recent changes.
+For a quasi-serious discussion of the fundamental principles
+behind GChart's design see <a
+href="{@docRoot}/com/googlecode/gchart/client/doc-files/gchart-manifest.html">
+The GChart Manifest</a>.
+
+<p>
+<a name="ChartGallery"></a>
+<h2>Chart Gallery</h2>
+
+All the charts below use GChart's standard HTML-only 
+chart rendering.
+<p>
+
+The <a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_7/com.googlecode.gchart.gchartdemoapp.GChartDemoApp/GChartDemoApp.html">
+GChart Live Demo</a> has faster, better looking charts
+because it plugs an external vector graphics library (the GWT
+incubator's <a
+href="http://code.google.com/p/google-web-toolkit-incubator/wiki/GWTCanvas">
+GWTCanvas</a>) into GChart. For a live demo that actually
+does something useful, check out this <a
+href="http://whatwouldnickdo.com/wordpress/264/simple-charts-in-gwt-with-gchart/">
+compound interest GChart at /home/nick</a> 
+
+<p>To see the simpler charts below live, visit the <a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_7/com.googlecode.gchart.gcharttestapp.GChartTestApp/GChartTestApp.html"
+target="_blank">GChart Paint Test</a> page, which contains the
+over 200 charts used to test GChart. If you see a test chart that piques your interest on this paint
+test page, you may want to visit the <a
+href="http://clientsidegchart.googlecode.com/svn/trunk/gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client">svn
+repository for this test</a> to look at its source code. <p>
+
+<a name="typicalgchartboilerplate"></a>
+
+<i>No charts?</i> These examples only <i>define</i> the chart. To
+actually <i>display</i> it, you
+must <tt>add</tt> and <tt>update</tt> it: 
+
+<p>
+<div  style="border: blue 2px outset; background-color: #EEF">
+<pre>
+   // <b>Use this typical GChart boilerplate to test out these examples:</b>
+   GChart gchart = new GChartExample00(); 
+   RootPanel.get().add(gchart);
+   gchart.update();
+</pre>
+</div>
+
+<p>
+
+<table border>
+  <tr><th>Code</th><th>Chart</th></tr>
+  <tr>
+  <td>
+<a name="GChartExample00"></a>
+ {@code.sample ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample00.java}
+  </td>
+  <td valign=top>
+ <img
+src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample00.png">
+  </td>
+</tr>
+  <tr>
+  <td>
+<a name="GChartExample00a"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample00a.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample00a.png">
+  </td>
+</tr>
+  <tr>
+  <td>
+<a name="GChartExample00b"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample00b.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample00b.png">
+  </td>
+</tr>
+  <tr>
+  <td>
+<a name="GChartExample01"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample01.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample01.png">
+  </td>
+</tr>
+  <tr>
+  <td>
+<a name="GChartExample01a"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample01a.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample01a.png">
+  </td>
+</tr>
+  <tr>
+  <td>
+<a name="GChartExample02"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample02.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample02.png">
+  </td>
+</tr>
+  <tr>
+  <td>
+<a name="GChartExample03"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample03.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample03.png">
+  </td>
+</tr>
+  <tr>
+  <td>
+<a name="GChartExample04"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample04.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample04.png">
+  </td>
+</tr>
+  <tr>
+  <td>
+<a name="GChartExample06"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample06.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample06.png">
+  </td>
+</tr>
+  <tr>
+  <td>
+<a name="GChartExample07"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample07.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample07.png">
+  </td>
+</tr>
+
+  <tr>
+  <td>
+<a name="GChartExample08"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample08.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample08.png">
+  </td>
+</tr>
+  <tr>
+  <td>
+<a name="GChartExample12"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample12.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample12.png">
+  </td>
+</tr>
+  <tr>
+  <td>
+<a name="GChartExample16"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample16.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample16.png">
+  </td>
+</tr>
+  <tr>
+  <td>
+<a name="GChartExample17"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample17.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample17.png">
+  </td>
+</tr>
+
+  <tr>
+  <td>
+<a name="GChartExample17a"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample17a.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample17a.png">
+  </td>
+</tr>
+
+  <tr>
+  <td>
+<a name="GChartExample18"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample18.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample18.png">
+  </td>
+</tr>
+
+  <tr>
+  <td>
+<a name="GChartExample18a"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample18a.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample18a.png">
+  </td>
+</tr>
+
+
+  <tr>
+  <td>
+<a name="GChartExample19"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample19.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample19.png">
+  </td>
+</tr>
+
+
+  <tr>
+  <td>
+<a name="GChartExample20a"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample20a.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample20a.png">
+  </td>
+</tr>
+
+  <tr>
+  <td>
+<a name="GChartExample21"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample21.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample21.png">
+  </td>
+</tr>
+
+
+  <tr>
+  <td>
+<a name="GChartExample22a"></a>
+ {@code.sample
+ ../../../../../../gcharttestapp/src/com/googlecode/gchart/gcharttestapp/client/GChartExample22a.java}
+  </td>
+  <td valign=top>
+ <img
+ src="{@docRoot}/com/googlecode/gchart/client/doc-files/gchartexample22a.png">
+  </td>
+</tr>
+
+
+</table> <a name="InstallingGChart"></a> <h2>Installing
+GChart</h2> <p> <i><small>The instructions below were tested
+using the Eclipse Platform Version 3.5, and GWT version 2.0.
+They assume you already have an existing GWT project to which you
+want to add a GChart.  <p>
+
+For general information about how to create a new working "Hello
+World" GWT project, see the instructions in the <a
+href="http://code.google.com/webtoolkit/gettingstarted.html">
+Getting Started</a> section of the GWT Developer
+Guide.</small></i>
+
+<ol>
+
+<li>Download the latest <tt>gchart-x.x.zip</tt> from the
+<a href="http://clientsidegchart.googlecode.com">GChart Project Home
+Page</a>.
+
+<p>
+
+<li>Unzip this file, which contains <tt>gchart.jar</tt> and
+the GChart javadocs, into a folder you can easily locate.
+
+<p>
+
+<li>Tell your GWT development tool(s) where to find <tt>gchart.jar</tt>
+<p>
+
+Just as for a normal Java JAR, you need to tell your GWT
+scripts, Java IDE, etc. where to find <tt>gchart.jar</tt>. For
+example, you might enter something like
+<tt>classpath="c:/gchart/gchart.jar"</tt> at appropriate places in
+your ant script.
+<p>
+
+Or, in Eclipse, you might
+right click on your GWT project's name in the Eclipse <i>Project
+Explorer</i>, select <i>Build Path</i>, then <i>Add External
+Archives</i>, and then navigate to the folder you unzipped
+GChart into and click on the <tt>gchart.jar</tt> it contains.
+
+<li> Add the following line to your project's GWT module
+file (that's the one beginning with your own application's
+module name, and ending in <tt>.gwt.xml</tt>):
+
+<a name="inheritsSyntax">
+<p>
+<pre>
+	&lt;inherits name='com.googlecode.gchart.GChart'/&gt;
+</pre>
+
+<li> (Optional) The above steps are sufficient if you
+want to stick with GChart's default, HTML-only rendering option.
+If you want to use the new canvas-rendering option, you'll
+need to follow additional steps for interfacing in
+an external GWT canvas library, as described in
+the <a href=
+"{@docRoot}/com/googlecode/gchart/client/GChart.html#setCanvasFactory(com.googlecode.gchart.client.GChartCanvasFactory)">
+setCanvasFactory</a> method's javadocs. 
+<p>
+
+
+</ol>
+<p>
+
+That's it. You can now add classes to your project such as
+those shown in the <a href="#ChartGallery">Chart
+Gallery</a>, and then make those charts appear in the
+browser via the <a href="#typicalgchartboilerplate">typical
+GChart boilerplate code</a> shown earlier.
+
+
+</ol>
+
+
+@author John C. Gunther
+@author May B. Yew
+@version 2.7 (tested with GWT 2.0 in Chrome, FF3, IE7, IE8 and IE6)
+
+</body>

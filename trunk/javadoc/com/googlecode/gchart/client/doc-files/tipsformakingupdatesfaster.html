@@ -1,0 +1,257 @@
+<html><head>
+<title>Tips for Making Client-side GChart 2.1 Updates Faster</title>
+
+<style>
+         body {
+            background-color: white;
+            color: black;
+            margin: 20px;
+            font-family: Arial, sans-serif;
+         }
+  
+
+</style>
+
+
+
+</head>
+
+<body>
+
+<span style="float: right;">
+<small>For downloads, demos, and more
+visit the</small><br><a
+href="http://clientsidegchart.googlecode.com" target="_top"><big><b>
+Client-side GChart Home Page</b></big></a>
+</span>
+
+<h2>Tips for Making Client-side GChart 2.1 Updates Faster</h2>
+
+<p>
+The following formulas, though not at all scientific, provide
+a good summary of my GChart performance tuning experiences and
+intuitions:<p>
+
+For the very first, "chart building" update:
+
+<pre>
+
+  Update time in ms = 5*K*("number of image elements"/2 +
+               "number of annotations or tick labels")
+</pre>
+<p>
+
+For every "data refreshing" update thereafter:
+<p>
+
+<pre>
+
+  Update time in ms = K*("number of image elements that changed"/2 +
+               "number of annotations or tick labels that changed")
+
+</pre>
+<p>
+
+<a name="myprincipaltestenvironment">My principal test
+environment is:</a>
+
+<pre>
+  1.4GHz Windows XP laptop, Firefox 2 browser <i>with Firebug disabled from the Add-ons menu</i>
+</pre>
+
+On this platform, <b>K is around 1</b>. The formulas have only
+been tested informally and only in my principal test environment,
+so you have been warned. The hope is that (apart from a change in
+K) the formulas should also work in other test
+environments--though that's never been tested.
+
+<p>
+There are a couple of terms used in these formulas you will
+have to understand how to estimate:
+<p>
+<ol>
+  <li>"number of image elements"
+<p>
+
+  If you see a displayed GChart, its graphical part is always
+constructed from a certain number of distinct rectangular images.
+Count these up and you get this number.
+<p>
+Note that the number of image elements per data point is very
+<tt>SymbolType</tt> dependent. A bar chart symbol requires only
+1, whereas a pie slice symbol could easily require 10 or more.
+<p>
+
+  <li>"number of annotations or tick labels"
+<p>
+Add up the number of point annotations and tick labels, and you
+get this number. The number of distinct text-based chart
+elements.
+<p>
+
+Note that the formula implies these elements are more
+expensive than the rectangular image elements used
+to draw the actual curves and such.
+
+<p>
+  <li> "that have changed"
+<p>
+If an image or tick label is exactly the same as it was before,
+it doesn't count. If you changed, say, the height of a bar
+on a bar chart, or the label of a point's annotation,
+it does count.
+<p>
+
+Actually, it's a bit more complicated than this, because GChart
+has several levels of change detection. At the
+"curve-sized-chunk" level, if a curve or a single chart axis
+ensemble is entirely unchanged, and if all the chunks
+that occur before it in the plot order are also entirely
+unchanged, GChart can
+completely skip over that chart chunk, going even faster.
+Otherwise, GChart still has to scan over the elements in the
+chunk to see if
+any of them have properties that have changed, and will update
+only those individual element properties that have changed--not
+every property of the element.
+<p>
+The term "axis ensemble" above means the axis itself, its tick
+marks, tick labels, and gridlines.
+<p>
+The term "plot order" above means the order by which the various
+"curve-sized-chunks" are rendered, which is: y-axis-ensemble,
+y2-axis-ensemble, x-axis-ensemble, curve 0, curve 1, etc.
+<p>
+
+So, for example, if you change the x-axis tick labels between
+updates GChart will update a bit faster than if you change the
+y-axis tick labels, and if you change curve 2's data instead of
+curve 0's, it will (all else being equal) update faster, too.
+
+</ol> 
+
+
+<p>
+
+As an example of applying these formulas the tables below compare
+actual and predicted update times for the very first, and for
+subsequent, updates for the three charts in Client-side GChart
+2.1's live demo in <a
+href="#myprincipaltestenvironment">my principal test environment</a>.
+
+<p>
+<ul>
+<pre>
+First time "chart building" updates:
+
+                     #Images #Labels  Predicted   Actual   
+Oil price forecast    115      27       423 ms    350 ms 
+Grouped bar            38      28       235 ms    220 ms  
+Sine curve            522       8      1345 ms    1330 ms   
+
+Second and subsequent "data change only" updates:
+
+                     #Changed  #Changed   Predicted  Actual
+                      Images    Labels    Time       Time
+Oil price forecast    83        4         45 ms      52 ms
+Grouped bar           12        12        18 ms      17 ms  
+Sine curve            500        0        250 ms     203 ms
+
+</pre>
+</ul>
+
+<p>
+
+As the data illustrates, the formulas summarize the relationship
+between chart size and update times for the live demo charts in
+my principal test environment reasonably well.  With luck, they
+may also provide helpful insights into the performance/size
+relationships for other charts and client environments.
+
+<p>
+
+The equations may not work beyond 1000 image elements or so,
+because non-linear effects that tend to slow updates even more
+appear to start to kicking in after that. 
+<p>
+
+Finally, note that if you use dynamically determined axis limits
+(by setting any axis limit to <tt>Double.NaN</tt>) GChart will
+assume that the entire axis-ensemble may have changed, slowing
+updates accordingly. So you should use explicitly determined
+axis limits whenever possible.
+
+<h4>Rules of Thumb (Mostly) Deducible from the Above</h4>
+
+The following rules of thumb are (mostly) simple consequences of the
+equations and discussion above:
+
+<ol>
+
+<li> The fewer elements, tick labels, and annotations on your
+chart, the faster it will update across the board. So, for
+example, don't label every tick mark, and try to space the tick
+marks wider apart, and don't draw gridlines on each tick mark. If
+you have a large data set, consider displaying
+a sequence of averages of successive groups of 10 points,
+rather than every single data point, or letting the user
+scroll through the data set via next/prev buttons on the chart,
+to cut down on the chart size. If you have a pie or line
+chart, experiment with larger settings of <tt>fillSpacing</tt>
+to cut down on the number of "filled in" elements, or consider
+switching to a more "element-efficient" chart type, such
+as bar chart, etc.
+
+<li> Avoid recreating charts from scratch. Instead, re-update the
+same chart repeatedly with new data. This will avoid the (roughly
+5-fold) performance penalty associated with creating the chart
+the very first time.
+
+<li> If a chart only has one curve that changes, arrange for
+that curve to be the last curve. In general, understand
+GChart's plot order, and try to push any required changes
+later in the plot order.
+
+<li> Avoid setting properties that have not actually changed,
+since this may trigger an "it might have changed" state within
+GChart that may slow you down.
+
+<li> For the same reason, avoid use of dynamically determined
+axis limits, by explicitly setting min/max on each axis, rather
+than using GChart's default of <tt>Double.NaN</tt>
+
+<li>Use the default setting of
+<tt>setOptimizeForMemory(false)</tt>.
+
+<li>Of the three tested browsers, Firefox 2 cuts chart update
+times by around 30% to 40% compared to IE7 (IE6 is <i>a lot</i>
+slower than either).  If your users are open to the idea,
+encourage them to switch to Firefox. 
+
+<li>Use your own externally created widgets and GChart's
+widget-based <tt>addTick</tt> and <tt>setAnnotationWidget</tt>
+methods to define your chart's tick labels and annotations. This
+approach will let you change the content of tick labels and
+annotations without any of GChart's "needs update" flags being
+set--often speeding updates considerably. In fact, if no other
+changes occur except such content-only changes to widget-based
+tick labels and annotations, the update call can be entirely
+eliminated.
+
+<li>Be sure to <b>disable Firebug</b> from the Add-ons menu and
+restart Firefox before doing any performance-sensitive
+GChart-related usability testing (disabling from Firefox's own
+menu is not sufficient!). Updates can be <b>up to 10 times
+slower</b> when this valuable debugging tool is enabled. Plus, it
+leaks just about the entire chart.  This makes sense if you
+think about what Firebug is doing: creating extra references to,
+and keeping track of, every last HTML element the compiled GChart
+employs (as economists have known for years, whenever big brother
+is watching, efficiency suffers). Similar statements may apply
+to other debugging tools and add-ons you may be using.
+
+</ol>
+
+</body>
+
+</html>

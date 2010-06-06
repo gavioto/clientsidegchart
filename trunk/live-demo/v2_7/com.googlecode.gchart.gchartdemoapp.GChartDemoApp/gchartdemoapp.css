@@ -1,0 +1,21 @@
+/* With the standard GWT styles, IE has oversized buttons, list box items, 
+   and oversized popup dialog on the pie chart example.
+
+   This extra CSS patches these IE-specific CSS problems in the standard GWT 
+   default stylesheets.
+*/
+
+* html table td {
+  font-family: Arial Unicode MS, Arial, sans-serif;
+  font-size: 0.8em; 
+}
+* html .gwt-Button {
+  font-size: 0.8em; 
+}
+* html .gwt-ListBox {
+  font-size: 1em;   
+}
+
+* html .gwt-DialogBox table td {
+  font-size: 0.8em;   
+}

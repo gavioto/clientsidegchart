@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Note that basedir is the parent of the gchart
+     Eclipse project folder that contains this build file,
+     and hence basedir is the Eclipse-workspace
+     folder that contains all three gchart-related projects
+ -->
+
+<project name="build-gchart" default="run-gcharttestapp-hosted" basedir="..">
+<description> 
+Builds and tests GChart, via three Eclipse-based projects located
+in the same Eclipse workspace folder:
+		
+1) gchart - the GWT module that implements GChart
+
+2) gchartdemoapp - a live demo to help new users understand what
+GChart can do for them (OK, it's just 3 charts, but we have
+plans...) and to provide useful sample code.
+
+3) gcharttestapp - mainly a "paint test" where various specific
+charts that must look a certain way are created. These
+charts must be visually inspected to assure that they have
+the features described in each chart's footnotes. The paint
+test also includes every chart in GChart's Chart Gallery, and
+is put up on Google code so anyone can run the test set before 
+downloading.
+</description>
+	
+<!-- encapsulates GWT-ant boilerplate for typical Eclipse project -->
+  <import file="game.xml" />
+
+<!-- in gchart.jar's manifest, and within the zip's filename -->
+  <property name="gchart.version" value="2.7" />
+
+<!-- GChart GWT module itself (what users actually install) -->  
+  <property name="gchart.projectfolder" value="gchart" />
+  <property name="gchart.toolsfolder" value="tools" />
+  <property name="gchart.modulename"
+            value="com.googlecode.gchart.GChart" />
+<!-- Application that uses GChart to display a "paint test" -->
+  <property name="gcharttestapp.projectfolder" value="gcharttestapp" />
+  <property name="gcharttestapp.modulename"
+   value = "com.googlecode.gchart.gcharttestapp.GChartTestApp" />
+  <property name="gcharttestapp.homepage"
+            value = "GChartTestApp.html" />
+<!-- Live demo/training/sample app deployed on GChart site -->
+  <property name="gchartdemoapp.projectfolder" value="gchartdemoapp" />
+  <property name="gchartdemoapp.clientfolder"
+value="${gchartdemoapp.projectfolder}/${game.sourcefolder}/com/googlecode/gchart/gchartdemoapp/client" />
+  <property name="gchartdemoapp.publicfolder" 
+value="${gchartdemoapp.projectfolder}/${game.sourcefolder}/com/googlecode/gchart/gchartdemoapp/public" />
+  <property name="gchartdemoapp.modulename"
+value = "com.googlecode.gchart.gchartdemoapp.GChartDemoApp" />
+  <property name="gchartdemoapp.homepage"
+            value = "GChartDemoApp.html" />
+  <property name="live-demo-root" value="live-demo/v2_7" />
+<!-- javadoc deployed on GChart site -->
+  <property name="live-javadoc-root" value="javadoc" />
+
+  <target name="init">
+    <description>
+Intitializes time stamp, performs validation checks, etc.
+(every task will run this before it gets going).
+    </description>
+    <tstamp />
+  	<buildnumber />
+  </target>
+  
+  <target name="clean" depends="init">
+    <game.clean projectfolder="${gchart.projectfolder}" />
+    <game.clean projectfolder="${gcharttestapp.projectfolder}" />
+    <game.clean projectfolder="${gchartdemoapp.projectfolder}" />
+  </target>
+
+  <target name="java-compile-gchart" depends="init">
+    <description>
+Compiles GChart's java files to create standard Java class files.
+    </description>    
+		<game.javac projectfolder="${gchart.projectfolder}" />
+  </target>
+
+	  <target name="gchart-javadoc" depends="java-compile-gchart">
+	    <javadoc sourcepath="${gchart.projectfolder}/${game.sourcefolder}"
+	         destdir="${gchart.projectfolder}/${game.javadocoutput}"
+           classpath= "${game.gwt.user.jar}:${game.gwt.dev.jar}"
+	         author="true"
+	         version="true"
+	         use="true"
+	         public="true"
+	         windowtitle="GChart ${gchart.version} API"
+	         nodeprecated="false"
+	         failonerror="true"
+	         source="1.5"
+	         linksource="true">
+	    <taglet
+	       name="com.johncurtisgunther.codesampler.CodeSampler"
+	       path="tools/codesampler/bin" />
+	    <doctitle><![CDATA[<h1>GChart ${gchart.version} API</h1>]]></doctitle>
+	    <header><![CDATA[<small>For downloads, demos, and more
+visit the</small><br><a
+href="http://clientsidegchart.googlecode.com" target="_top"><big><b>
+Client-side GChart Home Page</b></big></a>]]></header>
+	    <bottom><![CDATA[<i>Copyright &#169; 2007-2009 John C.
+	    Gunther. All Rights Reserved. Portions from
+GWTCanvas, Copyright &#169; Google, Inc.</i>]]></bottom>
+	  </javadoc>
+	  </target>
+
+  <!-- creates GChart's javadocs, and copies them to the SVN folder
+       that GChart's home page links to -->
+  <target name="deploy-gchart-javadoc"
+          depends="gchart-javadoc">
+     <sequential>     
+        <delete dir="${live-javadoc-root}"
+excludes=".svn/**" />
+        <copy todir="${live-javadoc-root}">
+          <fileset
+            dir="${gchart.projectfolder}/${game.javadocoutput}"
+          />
+        </copy>
+     </sequential>  
+  </target>
+
+	<target name="exportgchartasmodulejar"
+         depends="java-compile-gchart">
+    <game.exportgwtmoduleasjar
+       projectfolder="${gchart.projectfolder}"
+       title="GChart"
+       version="${gchart.version}"
+       datetime="${DSTAMP}${TSTAMP}"
+       buildnumber="${build.number}"
+     />
+  </target>
+
+  <target name="makegchartzip"
+          depends="clean, exportgchartasmodulejar, gchart-javadoc">
+    <zip
+       basedir="${gchart.projectfolder}"
+       destfile="${gchart.projectfolder}-${gchart.version}.zip"
+       includes="${gchart.projectfolder}.jar,README.txt,LICENSE.txt,${game.javadocoutput}/**/*.*" />
+  </target>
+
+<!-- final steps to run after testing, just before uploading the
+a new version without updating the demo files-->	
+<target name="final-preship-steps-sans-demo"
+   depends="makegchartzip, deploy-gchart-javadoc">
+</target>
+
+<!-- final steps to run after testing, just before uploading the a new version -->	
+<target name="final-preship-steps"
+   depends="makegchartzip, deploy-gchart-demoapp,
+   deploy-gchart-testapp, deploy-gchart-javadoc">
+</target>
+
+  <target name="java-compile-gcharttestapp"
+          depends="exportgchartasmodulejar">
+		<game.javac projectfolder="${gcharttestapp.projectfolder}"
+    cpextra="${gchart.projectfolder}/${gchart.projectfolder}.jar:${gchart.toolsfolder}/gwt-incubator.jar" />
+  </target>
+
+
+  <target name="java-compile-gchartdemoapp"
+          depends="exportgchartasmodulejar">
+		<game.javac projectfolder="${gchartdemoapp.projectfolder}" 
+     cpextra="${gchart.projectfolder}/${gchart.projectfolder}.jar:${gchart.toolsfolder}/gwt-incubator.jar" />
+  </target>
+
+  <target name="gwt-compile-gcharttestapp"
+          depends="clean, java-compile-gcharttestapp">
+    <game.gwtcompile
+      projectfolder="${gcharttestapp.projectfolder}"
+      modulename="${gcharttestapp.modulename}"
+      cpextra="${gchart.projectfolder}/${gchart.projectfolder}.jar:${gchart.toolsfolder}/gwt-incubator.jar"
+    />
+  </target>
+
+  <target name="gwt-compile-gcharttestapp-pretty"
+          depends="clean, java-compile-gcharttestapp">
+    <game.gwtcompile
+      projectfolder="${gcharttestapp.projectfolder}"
+      modulename="${gcharttestapp.modulename}"
+      cpextra="${gchart.projectfolder}/${gchart.projectfolder}.jar:${gchart.toolsfolder}/gwt-incubator.jar"
+      style="PRETTY"  
+    />
+  </target>
+
+  <target name="gwt-compile-gchartdemoapp"
+          depends="java-compile-gchartdemoapp">
+     <sequential>  
+        <copy todir="${gchartdemoapp.publicfolder}">
+          <fileset
+            dir="${gchartdemoapp.clientfolder}" includes="GChartExample*.java,GChartDemoApp.java"/>
+          <mapper type="glob" from="*.java" to="*.txt" />
+        </copy>   
+        <game.gwtcompile
+           projectfolder="${gchartdemoapp.projectfolder}"
+           modulename="${gchartdemoapp.modulename}" 
+           cpextra="${gchart.projectfolder}/${gchart.projectfolder}.jar:${gchart.toolsfolder}/gwt-incubator.jar" />
+     </sequential>  
+  </target>
+
+  <target name="gwt-compile-gchartdemoapp-pretty"
+          depends="java-compile-gchartdemoapp">
+     <sequential>  
+        <copy todir="${gchartdemoapp.publicfolder}">
+          <fileset
+            dir="${gchartdemoapp.clientfolder}" includes="GChart*.java"/>
+          <mapper type="glob" from="*.java" to="*.txt" />
+        </copy>   
+        <game.gwtcompile
+           projectfolder="${gchartdemoapp.projectfolder}"
+           modulename="${gchartdemoapp.modulename}" 
+           cpextra="${gchart.projectfolder}/${gchart.projectfolder}.jar:${gchart.toolsfolder}/gwt-incubator.jar" 
+           style="PRETTY" />  
+     </sequential>  
+  </target>
+  
+  <target name="deploy-gchart-demoapp"
+          depends="gwt-compile-gchartdemoapp">
+     <sequential>     
+        <delete
+dir="${live-demo-root}/${gchartdemoapp.modulename}"
+excludes=".svn" />
+        <copy todir="${live-demo-root}">
+          <fileset
+            dir="${gchartdemoapp.projectfolder}/${game.j2jsoutput}"
+          />
+        </copy>
+     </sequential>
+
+  </target>
+
+  <target name="deploy-gchart-testapp"
+          depends="gwt-compile-gcharttestapp">
+     <sequential>     
+        <delete
+dir="${live-demo-root}/${gcharttestapp.modulename}"
+excludes=".svn" />
+        <copy todir="${live-demo-root}">
+          <fileset
+            dir="${gcharttestapp.projectfolder}/${game.j2jsoutput}"
+          />
+        </copy>
+     </sequential>  
+
+  </target>
+
+  <target name="run-gchartdemoapp-hosted"
+          depends="java-compile-gchartdemoapp">
+
+    <game.shell
+       projectfolder="${gchartdemoapp.projectfolder}"
+       url="${gchartdemoapp.modulename}/${gchartdemoapp.homepage}"
+       cpextra="${gchart.projectfolder}/${gchart.projectfolder}.jar:${gchart.toolsfolder}/gwt-incubator.jar"
+    />
+
+  </target>
+
+  <target name="clean-gchartdemoapp-hosted"
+          depends="clean, run-gchartdemoapp-hosted">
+ 
+  </target>
+
+
+  <target name="run-gcharttestapp-hosted"
+          depends="java-compile-gcharttestapp">
+
+    <game.shell
+       projectfolder="${gcharttestapp.projectfolder}"
+       url="${gcharttestapp.modulename}/${gcharttestapp.homepage}"
+       cpextra="${gchart.projectfolder}/${gchart.projectfolder}.jar:${gchart.toolsfolder}/gwt-incubator.jar"
+    />
+ 
+  </target>
+
+  <target name="clean-gcharttestapp-hosted"
+          depends="clean, run-gcharttestapp-hosted">
+ 
+  </target>
+
+
+</project>

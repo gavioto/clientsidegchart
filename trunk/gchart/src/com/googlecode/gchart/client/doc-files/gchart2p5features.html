@@ -1,0 +1,574 @@
+
+<html><head>
+<title>Client-side GChart 2.5 Release Notes</title>
+
+<style>
+         body {
+            background-color: white;
+            color: black;
+            margin: 20px;
+            font-family: Arial, sans-serif;
+         }
+  
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<span style="float: right;">
+<small>For downloads, demos, and more
+visit the</small><br><a
+href="http://clientsidegchart.googlecode.com" target="_top"><big><b>
+Client-side GChart Home Page</b></big></a>
+</span>
+<small><small>
+All contributions, conceptual or practical, psuedo or fully
+coded, gratefully acknowledged and properly documented. 
+</small></small>
+
+
+<h3>Client-side GChart 2.5 Release Notes</h3>
+<p>
+
+This release provides faster, better looking, alpha-transparent,
+area, line, and pie charts via a new canvas-powered rendering
+option.
+<p>
+
+Compare <a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_5/com.googlecode.gchart.gchartdemoapp.GChartDemoApp/GChartDemoApp.html">
+the new live demo</a> with <a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_41/com.googlecode.gchart.gchartdemoapp.GChartDemoApp/GChartDemoApp.html">
+the old live demo</a>
+to get a quick feel for the canvas-powered performance and
+visual quality improvements
+you can expect with this release.
+
+<p>
+
+To access these features, you'll need to plug an external
+canvas library into GChart (<tt>GWTCanvas</tt> in the gwt-incubator is
+reccommended) as described in detail
+in the <a
+href="../GChart.html#setCanvasFactory(com.googlecode.gchart.client.GChartCanvasFactory)">setCanvasFactory</a>
+method.
+<p>
+
+With the external canvas in place, the next step is to tell GChart
+you want a curve to be "continuously filled" by invoking
+<tt>setFillSpacing(0)</tt>.
+<p>
+
+With each such continuously filled curve, GChart automatically
+exploits your external canvas library to improved the quality and
+speed of that curve's rendering. Specifically, banded-filled pie
+slices become solid filled, dotted connecting lines become
+continuously connected, and (the biggest stretch)
+bar charts become area charts. See
+the <a
+href=../GChart.Symbol.html#setFillSpacing(double)>setFillSpacing</a>
+method's javadocs for a detailed description of how each existing
+symbol type implements this new "continuously-filled",
+canvas-powered, rendering option.  <p>
+
+Note that GChart's previous HTML-only rendering is still
+available, and is the default rendering mode if you don't bother
+to plug in an external canvas. Or, to request GChart's standard
+HTML-only rendering on a single curve, just use a
+<tt>fillSpacing > 0</tt> for that curve.
+
+<p>
+
+Though there are exceptions (certain line chart update scenarios
+can be over three times faster than before, and, on the other
+hand, simple bar charts will look and perform about the same)
+most applications can expect to see modest performance gains
+(say, 25% faster), coupled with greatly improved visual chart
+quality.  <p>
+
+<i>Note on GWT 1.5.3 ==> 1.6 transition</i>
+
+<blockquote><small> This release has been tested in both GWT
+1.5.3 and 1.6.  However, 1.6 developers will have to continue to
+use the (deprecated in 1.6) 1.5.3 event handling idioms for now. A
+follow up release that migrates GChart to use all the new 1.6
+idioms (and that will <i>not</i> be tested in 1.5.3) is
+planned. I took this approach because I did not want to delay
+the release (it's been over four months) any further, plus I
+wanted to have one last, up-to-date, stable, 1.5.3-compatible
+release for those who may need to stick with 1.5.3 for some
+reason.</small></blockquote>
+
+
+<b>Detailed change log:</b>
+<p>
+
+<ol>
+
+
+<h4><li>Continuously filled, canvas-rendered, pie, area, and connecting lines
+via the new <tt>0</tt>  fill
+spacing setting</h4>
+<p>
+With this release, <tt>setFillSpacing(0)</tt> is now legal, and
+means "continuously fill the curve that uses this symbol".
+<p>
+When an external canvas facility has been interfaced to GChart
+via
+<a
+href="../GChart.html#setCanvasFactory(com.googlecode.gchart.client.GChartCanvasFactory)">setCanvasFactory</a>,
+and a non-zero
+<tt>fillThickness</tt>
+has been specified, this setting will produce
+crisply/quickly rendered solid-fill pie, line, and area charts,
+with alpha-transparency (via the new RGBA color specs
+described below).
+<p>
+
+To see these faster, better-looking, pie, line, and area charts
+visit the <a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_5/com.googlecode.gchart.gchartdemoapp.GChartDemoApp/GChartDemoApp.html">
+now canvas-powered live demo</a>. 
+<p>
+
+
+<p> Some of the default and <tt>fillSpacing</tt> values were
+changed from <tt>1</tt> to <tt>0</tt> in order to assure that the
+canvas-based rendering kicks in by default whenever possible.  If
+no external canvas has been interfaced to GChart the new
+<tt>0</tt> setting is treated the same as a <tt>1</tt>.  <p>
+
+See the
+<a
+href=../GChart.Symbol.html#setFillSpacing(double)>setFillSpacing</a>
+javadoc for full details.
+
+<h4><li>Support for RGBA (Red, Green, Blue, Alpha) color specs</h4>
+<p>
+
+The
+
+<a
+href="../GChart.Symbol.html#setBackgroundColor(java.lang.String)">setBackgroundColor</a>
+and
+<a
+href="../GChart.Symbol.html#setBorderColor(java.lang.String)">setBorderColor</a>
+methods now support
+RGBA (for example, <tt>rgba(255,0,0,0.5)</tt> for semi-transparent red)
+color specifications.
+<p>
+
+The new alpha-transparency support only works for the
+canvas-rendered aspects of each curve. For HTML-rendered aspects,
+GChart quietly collapses the RGBA specs into standard RGB (e.g.
+rgba(255,0,0,0.5) ==> rgb(255,0,0)).
+
+ 
+<h4><li><tt>LINE_CANVAS</tt> deprecated (just use <tt>LINE</tt>)</h4>
+<p>
+
+<tt>LINE_CANVAS</tt> symbol type is now just another name for
+<tt>LINE</tt>, and deprecated.
+<p>
+
+Basically, GChart now exploits your external canvas library
+whenever "continuous filling" (via <tt>setFillSpacing(0)</tt>)
+has been requested. So the special <tt>LINE_CANVAS</tt> symbol
+type of previous versions is no longer needed.
+
+<p>
+
+<h4><li>Printer-friendly improvements</h4>
+
+In previous versions, gridlines and axes were rendered via the
+background color. So, without special effort, in some browsers,
+these aspects of the chart would not show up in printed pages
+(Firefox, for example, drops background colors in printed
+pages unless you check its "Print background" option).
+<p>
+
+Gridlines, axes, and so forth, now use the border color, rather
+than the background, which means they render properly in
+printouts without this browser option tweaking.
+<p>
+
+More generally, in previous versions, odd-width or height
+elements always had at least 1 px of background-rendered width or
+height in the middle of the element, even if the border was
+large enough to take up the entire element. GChart now uses
+an asymetrical border to assure that in these cases,
+the entire symbol is rendered via the border (and thus will
+print without an "empty line" of background through the
+middle of the symbol).
+<p>
+
+Thus, the only thing that won't print are background-specified
+colors of HTML-rendered chart symbols (bars, rectangular point
+markers, etc), and the plot area background color. This
+is sometimes a feature (saves ink) but you can easily work
+around it. For symbols, you can simply use oversized borders
+that fill up
+the entire symbol or, with a little more work to create
+appropriate images files, define the
+HTML-rendered symbol's interior via 
+the <a
+href="../GChart.Symbol.html#setImageURL(java.lang.String)">
+setImageURL</a> method. Similarly, to
+make the plot area background printable, use the
+<a href="../GChart.html#setPlotAreaImageURL(java.lang.String)">
+setPlotAreaImageURL</a> method.
+
+<p>
+
+As a result of this change, it's now straightforward to produce
+charts that print well without special end-user user effort on all
+browsers. 
+
+<p>
+
+<h4><li>Tick locations (inside, outside, centered) and padding</h4>
+
+The new
+release add a
+<a
+href="../GChart.Axis.html#setTickLocation(com.googlecode.gchart.client.GChart.TickLocation)">setTickLocation</a>
+method that supports ticks
+placed inside, outside, or that are centered-on, their axis.
+<p>
+The new
+<a
+href="../GChart.Axis.html#setTickLabelPadding(int)">setTickLabelPadding</a>
+method allows you to control the amount of
+padding (blank space) between ticks and their labels, and the new
+<a
+href="../GChart.Axis.html#getTickSpace()">getTickSpace</a>
+returns the amount of space allocated for ticks outside of the
+plot area (taking into account the location of the ticks).
+
+<h4><li>Different approach to plot area clipping</h4>
+
+The way that graphical aspects of the chart are clipped to the
+plot area now employs <tt>overflow: hidden</tt> on the divs that
+contain each curve's graphical rendering.  Previously, points and
+their annotations were simply not rendered, in an all-or-nothing
+manner, whenever the x,y location associated with the point was
+outside of the plot area. The new approach does a better job of
+clipping things, such as connecting lines, that may be half
+inside, half outside, the plot area.
+
+<p>
+
+New methods <a
+href="../GChart.html#setClipToPlotArea(boolean)">setClipToPlotArea</a> and
+ <a
+href="../GChart.html#setClipToDecoratedChart(boolean)">setClipToDecoratedChart</a>
+have been added, and the corresponding older clipping methods
+ <a
+href="../GChart.html#setShowOffChartPoints(boolean)">setShowOffChartPoints</a>
+and
+ <a
+href="../GChart.html#setShowOffDecoratedChartGlyphs(boolean)">setShowOffDecoratedChartGlyphs</a>
+have been re-implemented in terms of the new methods, and
+deprecated.
+<p>
+
+Specific point annotations are completely visible if any part of
+the annotated symbol is visible within the plot area, and
+completely hidden otherwise.
+<p>
+Hover selection feedback and popup hover annotations are
+never clipped to the plot area.
+
+ <p>
+
+
+<h4><li>Unused <tt>setBackgroundColor</tt> method dropped from
+<tt>GChartCanvasLite</tt> interface</h4>
+<p>
+This method was never used, but was originally included in the
+interface for possible future use.
+<p>
+
+The new canvas rendering approach uses multiple, possibly
+overlapping, canvas Widgets and thus requires that each have a
+transparent background. Thus this method is now unlikely ever
+to be needed, so it has been dropped from the
+<a href="../GChartCanvasLite.html">GChartCanvasLite</a> interface.
+
+<p>
+
+Though not required, to eliminate clutter, it's best to delete 
+any <tt>GChartCanvasLite</tt> wrapper code that you may have
+written to define the dropped <tt>setBackgroundColor</tt> method.
+
+<h4><li>Curve-specific rendering contexts (<tt>divs</tt>)</h4>
+
+With this release, each curve get's it's own rendering context
+(implemented as series of dedicated <tt>divs</tt>) in the DOM.
+Previously, all curves shared a single rendering context.
+
+<p>
+
+This is largely an internal change, originally motiviated by
+the need to integrate canvas rendering while preserving
+a consistent z-order with a curve's HTML-rendered elements.
+
+<p>
+
+But, there is one important performance related improvement as a
+result of this change: if only one curve has been changed since
+the last update, the update can be effected without having to
+re-update any of the other curves. Previously, all curves that
+came after the modified curve would also have to be re-updated.
+So, certain specialized update scenarios, such as changes to just
+the first curve of a multi-curve chart as part of, say, an
+animation sequence, are now significantly faster.
+
+<h4><li>Axis ticks, gridlines, labels now rendered via internal
+curves</h4>
+<p>
+
+This is a significant internal implementation change that does
+not impact the external interface. Previous versions used
+specialized code to render axis-related elements such as ticks,
+gridlines, tick-labels, and the axis itself.  Now, GChart
+instead configures special internal system curves that, when rendered as
+usual, render these chart elements.  So, with this release, all
+GChart chart elements are rendered via curves--either developer
+defined or internally created by GChart.<p>
+
+This change simplifies the current code and moreover should
+facilitate the addition of future axis related features such as
+minor ticks, differently colored or styled gridlines, and a
+second x axis.  The new <tt>setTickLocation</tt> and
+<tt>setTickLabelPadding</tt> methods of this release (described above)
+are the first installment of these axis-related improvements.
+
+
+<h4><li>Modified hit testing binning strategy</h4>
+
+Previously, GChart's hit testing defined bins that spanned the
+entire decorated chart.
+<p>
+
+In the new release, the bins only span the plot-area.
+
+<p>
+
+Since most applications place all of their points within the
+plot area, this should provide a very small ("less bins")
+performance boost for most applications.
+<p>
+
+However, specialized applications with a very large number of
+points that are placed outside the plot area could experience
+a significant hit testing (hover feedback) performance
+degradation. In the worst case, a linear sequential search
+over all points would be required during hit testing.
+<p>
+
+Given that the whole reason for the plot area is to hold the
+points of the chart, such usage scenarios, though possible, are
+unlikely.
+<p>
+
+This change was made to simplify the code changes required to
+implement the new plot area clipping strategy.
+
+<h4><li>Source code no longer Java 1.4 compatible</h4>
+
+I started using parameterized types (introduced in GWT 1.5)
+for the internal points and
+curves lists, in hopes of a small performance boost.
+
+<p>
+GChart has not been tested in GWT 1.4 for quite some time
+now, but if you were getting away with it anyway, you
+will no longer be able to without source code tweaking.
+
+
+<h4><li>Methods to define fill spacing and fill thickness of hover
+selection feedback added</h4>
+<p>
+
+A gap in the selection feedback API was plugged via the addition
+of the  <a
+href="../GChart.Symbol.html#setHoverSelectionFillSpacing(double)">setHoverSelectionFillSpacing</a>
+and
+<a
+href="../GChart.Symbol.html#setHoverSelectionFillThickness(int)">setHoverSelectionFillThickness</a>
+methods.
+ 
+
+<h4><li>New model to pixel axis transformation methods</h4>
+
+New <tt>Axis</tt> methods <a href=
+"../GChart.Axis.html#modelToPlotAreaPixel(double)">modelToPlotAreaPixel</a>
+and its inverse, <tt>plotAreaPixelToModel</tt> provide the ability
+to convert between pixel coordinates with an origin
+in the upper left corner of the plot area,
+and the model coordinates along an axis.
+
+<h4><li>getBlankImageUrl no longer uses a relative path</h4>
+
+getBlankImageUrl used to, by default, return <tt>"gchart.gif"</tt>.
+<p>
+
+It now returns <tt>GWT.getModuleBaseURL() + "gchart.gif"</tt> by
+default.
+<p>
+
+The change was made due to conform better to the new
+default GWT project folder structure introduced
+with GWT 1.6; with the new layout, you would get a broken
+image icon on your charts with the old default.
+
+<p>
+
+See <a
+href="../GChart.html#setBlankImageURL(java.lang.String)">setBlankImageURL</a>
+for more information.
+<p>
+
+<h4><li>Potentially Breaking Change:
+Default point AnnotationLocation is now SymbolType dependent</h4>
+<p>
+
+Previous versions used a default annotation location of
+<tt>AnnotationLocation.SOUTH</tt> for statically defined
+point annotations regardless of the symbol type. Whereas
+dynamic, popup hover-annotations used a symbol-type specific
+default location.
+<p>
+
+The current version uses the same, symbol-type-specific defaults
+for both kinds of annotations. These defaults change in an
+appropriate manner with symbol type. For example, baseline-based
+bar charts now, by default, position a point's annotations centered
+on the edge of the bar farthest from the baseline, which is more
+likely what you'd want.
+
+<p>
+
+To revert to the old convention, simply set the annotation
+location
+explicitly via code such as
+<tt>getCurve().getPoint().setAnnotationLocation(AnnotationLocation.SOUTH);</tt>
+<p>
+
+<h4><li>Very small pie slices are now easier to select</h4>
+<p>
+Previously, very small or 0-sized pie slices were often not
+selectable.<p>
+
+For hit testing purposes only, GChart now widens very small
+slices so that they have a minimum angle equivalent to +/- 1px
+along the arc part of the slice. This change makes it easier to
+select very small slices. 
+<p>
+
+Note that this change does not solve all the problems with small
+slice selection. For example, in a typical pie chart, if the
+first slice is very small or 0-sized, it still won't be
+selectable (you can place the very small slice at the end of the
+curve list to workaround this problem) <p>
+
+If you need the old behavior of <i>not</i> being able
+to select very small slices, use a line such as
+<tt>getCurve().getSymbol().setHoverSelectionEnabled(false);</tt>
+to explicitly turn off hover selection on the slice.
+
+<h4><li>Bugfix #1 Zero-width or height treated as 1px</h4>
+
+In some conditions, previously, zero-width or height symbols
+could be drawn with a 1px width or height. This problem, found
+during the testing of the new canvas rendering features, has been
+corrected.
+
+<h4><li>Bugfix #2 (issue #24)</h4>
+
+As reported by <tt>secnoc</tt> in <a
+href="http://code.google.com/p/gchart/issues/detail?id=24">issue
+#24</a>, in FF2, an uncaught exception <tt>Permission denied to
+get property HTMLDivElement.parentNode</tt> was thrown when
+GChart was determining if a <tt>TextBox</tt> element associated
+with the current event over the chart was a child of the
+currently opened hover annotation. 
+
+<p>
+
+GChart now catches any exceptions thrown when making these
+"is-contained-in" determinations, and then acts as if the element
+is contained within the opened hoverWidget. This fix can leave
+hover feedback on the chart when the user mouses away from it at
+times, but that is something that can happen in a variety of ways
+already, and so this bug-echo isn't really a serious problem.
+
+<p>
+
+Thanks to <tt>secnoc</tt> for providing the detailed bug report
+which made it very easy to reproduce and correct this bug.
+<p>
+
+<h4><li>Bugfix #3: null pointer exception for annotated pie symbols
+that did not explicitly set annotation location</h4>
+<p>
+Previously, setting an annotation on a pie slice without also
+setting the annotation location raised a null pointer exception
+when the chart was next updated.
+<p>
+
+This problem, uncovered inadvertantly during testing of the new
+clipping strategy (debugging is what happens when you're making
+other tests) has been corrected.
+
+<h4><li>Bugfix #4: Inappropriate horizontal scroll bar ranges</h4>
+
+<p> In some circumstances, horizontal scroll bar ranges could
+greatly exceed the range needed to display the chart. From a
+scrolling perspective, it looked like the GChart had added "extra
+whitespace" to the far right of the page.  <p>
+
+This problem was caused by inappropriately large default upper
+bound width estimates for annotations that used certain kinds of more
+complex HTML. Though the problem can still occur
+(these estimates are still not perfect) it is not expected
+to be as frequent or severe.
+<p>
+
+Note that you can override these defaults by explicit
+specification of the <tt>widthUpperBound</tt> and
+<tt>heightUpperBound</tt> parameters of
+<a
+href="../GChart.Symbol.html#setHoverWidget(com.googlecode.gchart.client.HoverUpdateable,%20int,%20int)">
+setHoverWidget</a>
+and similar methods.
+<p>
+
+<h4><li>Bugfix #5: Gridlines could occlude curves</h4>
+<p>
+
+This problem was reported as <a href=
+"http://code.google.com/p/gchart/issues/detail?id=17">issue
+17</a> by <tt>sibiquin</tt>.
+
+<p>
+The new DOM layout described above corrected this problem, as
+you can see on the sin/cos chart of the live demo.
+
+
+
+
+</ol>
+
+
+
+</body>
+
+</html>
+
+

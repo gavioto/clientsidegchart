@@ -1,0 +1,20 @@
+<module>
+
+	<!-- Inherit the core Web Toolkit stuff.                  -->
+	<inherits name='com.google.gwt.user.User'/>
+
+	<!-- Inherit the GChart module itself.                  -->
+	<inherits name='com.googlecode.gchart.GChart'/>
+
+	<!-- Uses the GWT incubator's GWTCanvas              -->
+   <inherits name='com.google.gwt.widgetideas.GWTCanvas' /> 
+
+ <inherits name='com.google.gwt.user.theme.standard.Standard'/> 
+<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
+<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>    -->
+   <stylesheet src="gchartdemoapp.css"/>
+
+	<!-- Specify the app entry point class.                   -->
+	<entry-point class='com.googlecode.gchart.gchartdemoapp.client.GChartDemoApp'/>
+  
+</module>

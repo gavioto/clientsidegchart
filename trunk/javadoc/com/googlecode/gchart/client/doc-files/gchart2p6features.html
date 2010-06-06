@@ -1,0 +1,210 @@
+
+<html><head>
+<title>Client-side GChart 2.6 Release Notes</title>
+
+<style>
+         body {
+            background-color: white;
+            color: black;
+            margin: 20px;
+            font-family: Arial, sans-serif;
+         }
+  
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<span style="float: right;">
+<small>For downloads, demos, and more
+visit the</small><br><a
+href="http://clientsidegchart.googlecode.com" target="_top"><big><b>
+Client-side GChart Home Page</b></big></a>
+</span>
+<small><small>
+All contributions, conceptual or practical, psuedo or fully
+coded, gratefully acknowledged and properly documented. 
+</small></small>
+
+
+<h3>Client-side GChart 2.6 Release Notes</h3> <p> Except for
+several bugfixes, this release is functionally equivalent
+to GChart 2.5. However, it replaces the deprecated
+<tt>ClickListeners</tt> with the equivalent but syntactically
+different <tt>ClickHandlers</tt> introduced in GWT 1.6. So, the
+main advantage of 2.6 over 2.5 is that it lets you eliminate the
+use of deprecated <tt>ClickListeners</tt> that will be dropped
+completely in GWT 2.0.  <p>
+
+Developers upgrading from a previous GChart release will have to
+convert any GChart <tt>ClickListeners</tt> to
+<tt>ClickHandlers</tt>. This is
+exactly the same set of code changes you would require, say,
+for a standard button Widget. Specifically:
+<p>
+
+<pre>
+Replace:
+  <tt>ClickListener</tt>
+with:
+  <tt>ClickHandler</tt>
+
+Replace:
+  <tt>onClick(Widget sender) {...}</tt>
+with
+  <tt>onClick(ClickEvent event) {Widget sender = event.getSource(); ...}</tt>
+
+
+Replace:
+  <tt>addClickListener</tt>
+with
+  <tt>addClickHandler</tt>
+
+</pre>
+
+Users of previous GChart releases that don't have time to make
+these conversions should stick with GChart 2.5 (you'll have to do
+it eventually, so you might as well get it over with).  <p>
+
+The above mechanical process works for the most common situation
+in which you never used <tt>removeClickListener</tt>. If you did,
+you will also have to save the <tt>HandlerRegistration</tt>
+reference returned by <tt>addClickHandler</tt> and invoke its
+<tt>removeHandler</tt> method in lieu of your previous call to
+<tt>removeClickListener</tt>.  See
+<a
+href="../package-summary.html#GChartExample18a">this Chart Gallery code</a>
+for an example.  See the <a href="http://code.google.com/webtoolkit/doc/1.6/ReleaseNotes_1_6.html#Upgrading">the GWT 1.6 upgrade docs</a>
+for more info on these listener to handler conversions.
+
+
+<blockquote><small> This release has been tested with GWT 1.7,
+and only works with GWT 1.6 or higher. GChart 2.5 is the last GWT
+1.5 compatible release. The listener methods of GChart 2.5 are no
+longer supported at all in 2.6, even though ordinary GWT 1.7
+still supports listeners via deprecated methods.  I decided on
+this approach to save time, and to assure that early adopters of
+GWT 2.0 (which will finally drop the listeners altogether) would
+be able to use GChart 2.6 without error.  </small></blockquote>
+<p>
+
+<b>Detailed change log:</b>
+<p>
+
+<ol>
+
+
+<h4><li>GChart now implements <tt>HasClickHandlers</tt>
+(<tt>SourcesClickEvents</tt> is no longer implemented)</h4>
+<p>
+
+The GWT 1.6 interface <tt>HasClickHandlers</tt> replaces the
+GWT-deprecated <tt>SourcesClickEvents</tt> interface, which
+GChart now no longer supports. Specifically,
+<tt>addClickListener</tt> and <tt>removeClickListener</tt> were
+dropped, and the new <a
+href="../GChart.html#addClickHandler(com.google.gwt.event.dom.client.ClickHandler)">
+addClickHandler</a> method (which, via its returned
+<tt>HandlerRegistration</tt> object, in effect provides a
+'removeClickHandler', too) has been added.  <p>
+
+See discussion above for further details on the specific changes
+you'll need to make to existing GChart click-event-related code. 
+
+<p>
+<h4><li>Bugfix 1: Dropped widgets in unusual widget-reference-reuse
+scenarios</h4>
+
+Using the exact same widget reference repeatedly (rather than
+creating a new Widget reference each time) could, in some usage
+scenarios, cause widget-based annotations, chart footnotes, or
+similar widget-defined features to be incorrectly dropped off the
+chart. Note that because, for efficiency, GChart can hold onto
+such references from deleted points, such repeated
+references/dropped annotations could occur without the developer
+creating them explicitly. <p>
+
+The problem occured because GChart did not account for the fact
+that, when a widget is added to the DOM in two different places,
+GWT automatically nulls out the first such reference
+(effectively, it moves the widget to the new DOM position). But this
+resulted in a situation in which what GChart thought was in the
+DOM, and what was actually in the DOM, were inconsistent.
+Because (to save time) GChart won't re-add a widget to the DOM if 
+it thinks that widget is already there, this could result in
+dropped widgets.
+<p>
+
+
+GChart now explicitly checks for such inconsistencies and
+re-adds the widget to the DOM if that is needed.
+
+<p>
+
+However, using the same widget reference for two different
+annotations is still a bad idea, because there is no simple way
+to determine which point the widget will end up annotating, and
+such "implicit" nulling of DOM references won't set GChart's
+"needs update" flag.  Therefore, an explanation of how GChart
+(now reasonably) handles, and how and why to avoid making, such
+repeated references was added to the <a
+href="../GChart.Curve.Point.html#setAnnotationWidget(com.google.gwt.user.client.ui.Widget,%20int,%20int)">
+setAnnotationWidget</a> javadocs.
+<p>
+
+<i>Tip:</i> Users of earlier GChart versions can workaround the bug, if
+they have trouble, by creating a brand new Widget and assigning
+it to the annotation in question, rather than reusing the same
+widget reference.
+
+<h4><li>Bugfix 2: Border around area charts was always 1px</h4>
+
+Due to a bug, the stroked border around a polygonal area
+was always <tt>1px</tt> wide.
+<p>
+
+This stroked border width is now correctly defined by the
+symbol's <tt>setBorderWidth</tt> setting.
+
+<h4><li>Bugfix 3: IE 'color washout' when chart moved in DOM</h4>
+
+In IE only, moving a GChart to a different position in the DOM
+resulted in previously rendered fill color, stroke color, and
+stroke thickness being reset to white, black, and 1px.  <p>
+<p>
+
+In the case in which a chart is inserted, removed, and then
+reinserted in the DOM, and the chart's rendering is
+up-to-date (its <tt>isUpdateNeeded</tt> method returns <tt>false</tt>)
+GChart will automatically re-render just those curves that are
+GWTCanvas rendered, so as to eliminate the washout effect. 
+<p>
+
+Note that this bugfix generates a performance penalty associated
+with moving a GChart to a different DOM "slot" when that GChart
+does not require an update. If you are planning to make changes
+to the GChart after re-insertion, you can avoid this penalty by
+making those changes before re-insertion, and then updating the
+chart after re-insertion. Better, when it makes sense to do so,
+you can place the GChart onto an AbsolutePanel and change it's
+position on that panel, rather than changing its DOM "slot", to
+avoid these re-insertion related renderings entirely.  <p>
+
+This bug was due to a bug in GWTCanvas (see
+<a
+href=http://code.google.com/p/google-web-toolkit-incubator/issues/detail?id=293>issue
+#293</a> in the GWT incubator issue tracker). See 
+TestGChart55.java and TestGChart55a.java for more information
+about this bugfix.
+
+</ol>
+
+</body>
+
+</html>
+
+

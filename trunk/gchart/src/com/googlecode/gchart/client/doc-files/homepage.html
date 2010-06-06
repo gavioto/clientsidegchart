@@ -1,0 +1,85 @@
+Client-side GChart is a GWT chart library that supports line, pie,
+bar, area, and combination charts, popups, mouse events, and more.
+<ul>
+<li><a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_7/com.googlecode.gchart.gchartdemoapp.GChartDemoApp/GChartDemoApp.html">The
+live demo</a> has advanced examples to illustrate what's possible.
+<li><a
+href="http://clientsidegchart.googlecode.com/svn/trunk/javadocs/com/googlecode/gchart/client/package-summary.html#ChartGallery">The
+Chart Gallery</a> has simpler examples to help get you started.
+<li><a
+href="http://clientsidegchart.googlecode.com/svn/trunk/javadocs/com/googlecode/gchart/client/package-summary.html#installingGChart">Installing gchart</a> explains how to plug
+the GChart library into your application.
+<li><a
+href="http://clientsidegchart.googlecode.com/svn/trunk/javadocs/com/googlecode/gchart/client/GChart.html">The javadocs</a> are so complete, you won't need a
+Wiki or a User's Guide
+<li><a href=xxx>The external resources page</a> has links to
+applications, tutorials, and blog posts.
+<li><a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_7/com.googlecode.gchart.gcharttestapp.GChartTestApp/GChartTestApp.html">The
+GChart Paint Test</a> contains over 200 charts. Think
+of it as bug insurance.
+<li><a
+href="http://clientsidegchart.googlecode.com/svn/trunk/javadocs/com/googlecode/gchart/client/doc-files/releasenotes.html">The release notes</a> explain the most recent
+changes.
+</ul><p>
+
+<p>GChart is layered on top of GWT's standard widget set.
+Specifically,
+<tt>Image</tt> widgets (for curves) and <tt>Grid</tt> widgets (for
+aligned text) are placed onto <tt>AbsolutePanels</tt> to render each
+chart. Thus,
+it works reliably cross-browser, fully exploits GWT's compiler
+technology, and does not require proprietary
+browser plug-ins, complex external JavaScript libraries, or a server
+hit each time the chart changes.<p>
+<p>
+
+Though this approach has many advantages, high visual quality for
+non-rectangular curve types isn't one of them. To fix this, GChart
+lets you optionally bolt on an external GWT vector graphics library. 
+
+<p>
+
+
+As of version 2.7, GChart releases are signed with the following PGP key:
+<p>
+
+<pre>
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.4.9 (GNU/Linux)
+
+mQINBEwEHX8BEADmw2om4OHePyIRSCol5416POEIz7j5V7z1K/0ysMyXt0Jt7QYC
+Dfk50Uv6/5QXWUtRyy4LCW+1K2SzOnrpBQuTwv5gG99i7BBBuu+pUnmxFMLDtG1y
+ntmXj5tCDShuhncfnYXi3YhNDWph0GP5q/+iH605YPVsRGN/goCGJqkb2Mmy8htJ
+X5rlMokREqkHu2EFo5XSrdDZ5jo8w4cqgVS/l1mOCGMrZZSit2zIpsvnvZ/LvdT0
+EVN25Oj4mccveJ1CzN/kXj046MeygaEEC6gmnMZTmDo4lvabWMSOBVGpF9qSc9ZK
+y7jdeVEKIVk4Ss6HniCfTSFiLABYWY9rAKSrY040olBGyoOyr4249nzcvC7Uk1IS
+GQt7frBEaZmu+DmiXipAAfASQhSsnzapnLyutgkessjbKHTP6kMgaoCssTO/0jnd
+EpB588tFrCHl4SJOcFEzEYeZqns1+DtfsrzLVQNaTKERpWZx4pQNlSKsDHYPjs2j
+uLQSdQOGsZSJbjynP1na7x09kn0YX22MXK6RxFg7ZgNG4xuOSW+FwIm8cAQVj9il
+CBmu7Xh/2dc2G0TKikk3MUW4bd02BtjLglAhm+vGWuDWMeBxcW+0KNXUUmSamGxR
+JTN8lEe/K6hqA4am70DQzQ8Nj1GBCSditUGkV1XCQCRIHc7RckhSggVHJQARAQAB
+tFZKb2huIEMuIEd1bnRoZXIgKGZvciBDT0RFIFNJR05JTkcgT05MWSkgPFRoaXNL
+ZXlJc05vdFJlbGF0ZWRUb0FuRW1haWxAbm9zdWNoZW1haWwuY29tPokCNgQTAQIA
+IAUCTAQdfwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4BAheAAAoJENWr0UrHqSwVlPUQ
+ANWpdHHw3Iu+XyUL34O1T2TJYVIW5hDM97zLSesmqccH8YxuBMPZtZmnr9RQ6xgd
+zJgkaTyEY+CLFIkBnikQA+1k29FviU2vTk7VrsLuB0YnYEBhWbPzlCBFz2yEYrLH
+wVCgd+mv9Kx6z4khQ/jAB0ehIpSq9Waux76+jE6rM55hLfnLbZt8FCjp2HU+YMCP
+zRQWj8OpPu/z2wH3x6MNA//SXw0xFDZwoVNSCZ+b9gYU7MRzC0ItaengnlNOHkx6
+zn6ejWMbm52ZAGzLGvCz20DBvAa6F3/lZZI9SyMqo1Zso2oWIy1LL8s4k+IJxPM+
+9WdTSAR+OGFF4XBElUZGNHxirxv7ddEgUexeqr/ZMeMBknm/6zAeRN3fup94qpbw
+klFq/5arL3+5RQXiY4RYFjoYgtY5aVy1mRbQe/0924KT6bqGgXdXe1G0PwhAtC0+
+QyUnIMj0uWZ9rcJmY0zaTp6wex9oOPqbQJ8+/H3C3AJEiv1nGlI1y7tNTqF2qjSc
+ToDv+h9SLWONSQlksimaPy2KxI5stjRC5nBsRnE7AsEVr8ROknziPknmt0HUgKjz
+1UnOTGezgYtXgc8n4jXD6ANWutedTKp/z09iOLp+IiploUSJ1cn5U0HfMCEP8O0Q
+pLKGzTgX2nF47Jjc/BDKDKKHGLgB17YOFvVb4SaaLtdK
+=yZtx
+-----END PGP PUBLIC KEY BLOCK-----
+</pre>
+
+<p>
+I'm told there are people who can read these things like tea leaves.
+<p>
+
+- John C. Gunther

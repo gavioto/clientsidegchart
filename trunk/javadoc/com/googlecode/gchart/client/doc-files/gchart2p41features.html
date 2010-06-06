@@ -1,0 +1,217 @@
+
+<html><head>
+<title>Client-side GChart 2.41 Release Notes</title>
+
+<style>
+         body {
+            background-color: white;
+            color: black;
+            margin: 20px;
+            font-family: Arial, sans-serif;
+         }
+  
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<span style="float: right;">
+<small>For downloads, demos, and more
+visit the</small><br><a
+href="http://clientsidegchart.googlecode.com" target="_top"><big><b>
+Client-side GChart Home Page</b></big></a>
+</span>
+<small><small>
+All contributions, conceptual or practical, psuedo or fully
+coded, gratefully acknowledged and properly documented. 
+</small></small>
+
+
+<h3>Client-side GChart 2.41 Release Notes</h3>
+<p>
+
+This v2.4 followup release adds several new features and fixes two bugs.
+
+<ol>
+
+<h4> <li>
+<tt>getMouseCoordinate</tt>, <tt>clientToModel</tt>,
+<tt>modelToClient</tt>, <tt>pixelToModel</tt>, and
+<tt>modelToPixel</tt></h4>
+<p>
+
+The new <a
+href="../GChart.Axis.html#getMouseCoordinate()">
+getMouseCoordinate</a> method 
+returns the "GChart tracked" mouse
+location, projected onto an axis of the chart, in the units of that
+axis.<p>
+
+The new <a
+href="../package-summary.html#GChartExample22a">World's Simplest
+Line Chart Editor</a> example in the Chart Gallery illustrates
+how to use this new method to add a new point to
+the chart whereever the user clicks. A slightly different
+version of the same chart now also appears in the
+updated <a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_41/com.googlecode.gchart.gchartdemoapp.GChartDemoApp/GChartDemoApp.html">
+live demo</a>.
+<p>
+
+The
+<a href="../GChart.Axis.html#clientToModel(int)">clientToModel</a>,
+<a href="../GChart.Axis.html#modelToClient(double)">modelToClient</a>,
+<a href="../GChart.Axis.html#pixelToModel(int)">pixelToModel</a>,
+and
+<a href="../GChart.Axis.html#modelToPixel(double)">modelToPixel</a>
+methods are
+provided for advanced applications that may overlay graphics on
+top of the chart, capture mouse events, etc., and that therefore
+need to convert back and forth between the pixel coordinates of
+the client window, or the GChart's own localized pixel units,
+and the model coordinates associated with the x and y values of
+points on the chart.
+
+<p>
+
+<small>
+Saurabh Hirani in <a href=
+ "http://groups.google.com/group/Google-Web-Toolkit/msg/80301715acb6f719">
+ this GWT Forum post</a> and in GChart <a
+ href="http://code.google.com/p/gchart/issues/detail?id=21">issue
+ #22</a> most recently suggested the need for client to model
+ coordinate mapping. Client to
+ model conversion was requested earlier in GChart <a
+ href="http://code.google.com/p/gchart/issues/detail?id=9">issue
+ #9</a> from <a href="http://yoxel.com">yoxel.com</a></small>
+
+<p>
+
+<h4> <li>New <tt>setDefaultSymbolBorderColors</tt> method</h4>
+
+The new <a
+href="../GChart.html#setDefaultSymbolBorderColors(java.lang.String[])">
+setDefaultSymbolBorderColors</a> method allows you to
+change GChart's default sequence of curve colors.
+
+<p>
+
+
+If, like me, you find choosing good default curve color sequence a bit
+challenging, consider re-using the LGPL licensed <a href=
+"http://ui.openoffice.org/VisualDesign/OOoChart_colors_drafts.html#02">
+OpenOffice default color sequence</a>. The OpenOffice developers
+actually let their users vote to select the best default color
+sequence. The <a
+href="../package-summary.html#GChartExample22a">World's Simplest
+Line Chart Editor</a> in the Chart Gallery illustrates how you
+can use <tt>setDefaultSymbolBorderColors</tt> to switch from
+GChart's defaults to these more popular OpenOffice colors.
+
+<p>
+
+<small>
+This feature was added in response to an email I received from <a
+href="http://www.profilercorp.com">Joe Cole</a>, pointing out
+that GChart could be substantially improved if it paid a bit more
+attention to basic graphic design principles, including default
+color choices, and in response to a comment about the desirability of
+changing GChart's colors in <a
+href="http://gwt-ext.com/forum/viewtopic.php?f=13&t=3465&start=3">
+this post</a> by Sanjiv Jivan.
+</small>
+
+<p>
+
+<h4><li>Bugfix #1</h4> Under some usage scenarios, in IE browsers
+only, if you placed a Client-side GChart onto an animated
+TabPanel, and reduced the number of points on the chart, and then
+re-updated it, some of the old points would remain visible
+(cruft).  <p>
+
+The underlying cause of this bug was documented in <a
+href="http://code.google.com/p/google-web-toolkit/issues/detail?id=3336">GWT
+issue 3336</a>.
+<p>
+
+
+<p><small>Is it a bug in IE, or in GWT? This bug seems like it is
+being caused by an outright IE bug (IE appears to simply ignore
+setting <tt>display: none</tt> on an image element in obscure
+cases) for which a cleanly encapsulated GWT workaround may not
+even be possible. In cases where no Javascript-based workaround
+that cleanly solves a documented browser "quirk" is available,
+it's likely more accurate to call it a bug in the browser, rather
+than a bug in GWT. On the other hand, if you encounter such
+insects while using GWT, they certainly appear to be GWT bugs to
+you.</small>
+
+<p>
+
+The original code that first exposed this bug was written as part
+of <a
+href="http://whatwouldnickdo.com/wordpress/264/simple-charts-in-gwt-with-gchart/">
+this GChart tutorial at /home/nick</a> by Nick Circelli (thanks,
+Nick). Stripped-down versions of that code that reproduce that
+original bug appear as <tt>TestGChart41.java</tt> and
+<tt>TestGChart41a.java</tt> of GChart's paint test.
+
+<p>
+
+<h4><li>Bugfix #2</h4> <tt>ANCHOR_MOUSE</tt>, if used in
+non-system curves, caused GChart to raise a <tt>null</tt> pointer
+exception.
+
+<p> The new <tt>ANCHOR_MOUSE</tt> symbol type was introduced for
+use by internal "system curves" to facilitate positioning popups
+relative to the position of the mouse cursor.  It worked fine
+when used for that purpose.  <p>
+
+But, if you were imaginative enough to try to use
+<tt>ANCHOR_MOUSE</tt> as the symbol type of an ordinary curve,
+you got a <tt>null</tt> pointer exception for your pains.
+
+  <p>
+
+An ordinary curve with the <tt>ANCHOR_MOUSE</tt> symbol type now
+positions an ordinary curve's points at the current "GChart
+tracked" mouse location. Note that GChart does <i>not</i> treat a
+change in mouse position as an implicit specification change to
+such curves, so, after the first update, you may have to make
+some small specification change to force GChart to update these
+curves to reflect the latest mouse position.
+
+
+<h4><li>Known bug not fixed</h4>
+<p>
+If a chart is initially updated without a Y or Y2 axis (because
+no curves were mapped to those axes) and then later curves are
+added to those axes, and if axis limits are specified explicitly,
+then the corresponding added axis remains unrendered.
+Similarly, removal of all curves mapped to an axis may not
+always remove the axis itself. 
+<p>
+
+It is expected that changes to be made with version 2.5 will
+also, as a side effect, fix this bug. You can
+workaround this bug by invoking a do-nothing axis limit
+specification to force an axis redraw. For example:
+
+<pre>
+   getY2Axis().setAxisMin(getY2Axis().getAxisMin());
+</pre>
+
+
+</ol>
+
+
+
+</body>
+
+</html>
+
+

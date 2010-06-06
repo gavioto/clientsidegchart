@@ -1,0 +1,295 @@
+
+<html><head>
+<title>GChart 2.2 Release Notes</title>
+
+<style>
+         body {
+            background-color: white;
+            color: black;
+            margin: 20px;
+            font-family: Arial, sans-serif;
+         }
+  
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<span style="float: right;">
+<small>For downloads, demos, and more
+visit the</small><br><a
+href="http://clientsidegchart.googlecode.com" target="_top"><big><b>
+Client-side GChart Home Page</b></big></a>
+</span>
+
+<h3>GChart 2.2 Release Notes</h3>
+<p>
+<ol>
+
+<h4> <li>New, Improved, Chart Decoration Sizing and Placement</h4>
+<p>
+  <ul>
+   
+    <tt><b><li>setAxisLabelThickness</b></tt>
+    <tt><b><li>setChartFootnotesThickness</b></tt>
+    <tt><b><li>setChartFootnotesLeftJustified</b></tt>
+    <tt><b><li>setChartTitleThickness</b></tt>
+    <tt><b><li>setLegendThickness</b></tt>
+</ul>
+<p>
+
+    The above methods let you precisely control the amount of
+space taken up by chart decorations (title, footnotes, axis
+labels, and legend key) and, thus, the exact pixel size of the
+chart as a whole.  <p>
+
+In particular, Sparkline charts (those without any decorative
+elements or spacing whatsoever) are straightforward with this
+release, as illustrated by <a
+href="../package-summary.html#GChartExample16">this new example chart</a>.
+
+<p>
+
+   Previously, the table-based widgets (<tt>DockPanel, Grid</tt>)
+that GChart used to place these decorations around the main plot
+area varied (as expected with HTML tables) in size and placement
+from browser to browser. This (in hindsight, poor) original
+implementation choice made precise browser-independent chart
+sizing tedious, if not impossible.
+
+<p>
+
+Though this is a big improvement, <b><i>it is a potentially
+breaking change</i></b> since the decoration placement algorithm is
+completely different in v2.2.  I've tried to adjust the
+defaults and such so that, if your pages are relatively flexible
+with regard to chart size, you should usually be OK, but if you've
+carefully tweaked your charts to make them fit just perfectly
+within their host page, you'll likely have to tweak them again
+using the above methods. Don't let that keep you from upgrading,
+though: these changes greatly simplify producing chart sizes and
+decoration placements that are exactly the same across all
+browsers--so you'll finally be able to get it right this time.<p>
+
+Regarding that new decoration layout algorithm, here it is in a nutshell:
+
+<ol>
+
+<li>Each decoration is placed within a rectangular band parallel
+to an appropriate side of the plot area.
+
+<li> You control the thickness of those bands (in pixels) by
+using the methods listed above. The other dimension conforms to
+an appropriate chart length or width. For example, footnotes are
+placed in a band whose height equals their specified thickness, and
+whose width equals the width of the entire chart.
+
+<li> With one exception (footnotes are left justified if you
+invoke <tt>setChartFootnotesLeftJustified(true)</tt>) each
+decoration is centered within its rectangular band.
+
+</ol>
+
+
+
+<p>
+<h4> <li>Better, Faster, Solidly-Connected Line Charts</h4>
+
+This release adds a special symbol type for solidly connected
+line charts:
+<p>
+
+<ul>
+    <tt><b><li>SymbolType.LINE</b></tt>
+</ul>
+
+<p>
+<a href="../package-summary.html#GChartExample00b">This new
+example code</a> uses the <tt>LINE</tt> symbol type to produce a
+simple "x<sup>2</sup> vs x" line chart.
+
+<p>
+
+This new LINE symbol type draws connected lines more efficiently
+by using a series of vertical or horizontal line segments
+(previously, you had to use BOX_CENTER with a 1px fill spacing,
+which rendered the line with a series of single pixel "dots").
+<p>
+
+With this new LINE symbol type, curve HTML element counts, and
+hence chart update times, are (for a chart whose x-value sequence
+is non-decreasing) proportional to (in the worst case) the width
+of the chart rather than (as with the previous version) the pixel
+length of the curve. For certain curve data (e.g.  a triangle
+wave with sharp peaks, a square wave, etc.) order of magnitude
+speedups are possible. But, for more typical curve data (e.g.
+lots of close-to-45-degree-angled connecting lines) you can
+expect only modest performance improvements.  <p>
+
+
+
+Due to Client-side GChart's reliance on rectangular rendering
+elements, line charts are still not its forte (that would be bar
+charts). So, even with these improvements, for many line chart
+applications, you'll have to settle for only two (you can let the
+user choose which two) of the following three desirable features:
+
+<ol>
+  <li>Fast update times (< 300ms)
+  <li>Large chart sizes (width >= 600px)
+  <li>Detailed rendering (1px line resolution) 
+</ol>
+
+<p>
+
+
+
+The <a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_2/com.googlecode.gchart.gchartdemoapp.GChartDemoApp/GChartDemoApp.html">
+updated live demo</a> contains
+a new <tt>SymbolType.LINE</tt> example chart at the bottom of the
+page that has a button on it that lets you toggle between the three
+possible pairs of these desirable features to show the exact same
+(sine and cosine) data set using:
+
+<p>
+
+<ol>
+  <li>A large, low resolution, fast updating line chart
+  <li>A large, high resolution, slow updating line chart
+  <li>A small, high resolution, fast updating line chart
+</ol>
+
+<p>
+
+Unless your visitors all have client environments much faster
+than mine, the one option you really want: large size, high
+resolution, fast updating, still isn't available for line charts.
+So, it's important to play with this demo GChart in your typical
+client environments to get a feel for if a line chart with an
+acceptable combination of size, update speed, and resolution is
+achievable for your application.  <p>
+
+Finally, don't forget that for many applications, a more
+efficient, "rectangle-friendly", GChart, such as a scatter plot,
+bar chart, or a line chart with (widely spaced) dotted connecting
+lines, can be an acceptable alternative to a solidly connected
+line chart.
+
+<h4> <li>Easier placement of annotations relative to standard
+"compass point" positions on the plot area, via
+the following new "ANCHOR" symbol types:</h4>
+<p>
+
+<ul>
+
+
+    <tt><b><li>SymbolType.ANCHOR_NORTHWEST</b></tt>
+    <tt><b><li>SymbolType.ANCHOR_NORTH</b></tt>
+    <tt><b><li>SymbolType.ANCHOR_NORTHEAST</b></tt>
+    <tt><b><li>SymbolType.ANCHOR_WEST</b></tt>
+    <tt><b><li>SymbolType.ANCHOR_CENTER</b></tt>
+    <tt><b><li>SymbolType.ANCHOR_EAST</b></tt>
+    <tt><b><li>SymbolType.ANCHOR_SOUTHEAST</b></tt>
+    <tt><b><li>SymbolType.ANCHOR_SOUTH</b></tt>
+    <tt><b><li>SymbolType.ANCHOR_SOUTHWEST</b></tt>
+</ul>
+<p>
+
+If you use one of these types, the actual x,y position of your
+point is ignored: the point is instead always placed in the
+northwest, north, northeast, etc. position within the plot area.
+<p>
+
+Typically, you'd add a point to a curve whose symbol employed one
+of these new types, and then you'd use the <tt>Point</tt> class
+methods <tt>setAnnotationWidget</tt>,
+<tt>setAnnotationLocation</tt> , <tt>setAnnotationXShift</tt> ,
+and <tt>setAnnotationYShift</tt> to position an externally
+created widget (say, a Grid</tt> to add a table) relative to the
+associated "anchoring" compass point position.  <p>
+
+These are the same symbol types used internally by the new
+decoration placement algorithm; use them whenever you need to
+precisely position your own "decorative" widgets relative to the
+corners, edges, or center of the plot area.
+
+<p> <h4> <li>New special convention for <tt>+/-Double.MAX_VALUE</tt></h4>
+
+<p> The <tt>addPoint</tt>, <tt>setX</tt> and <tt>setY</tt>
+methods now interprete <tt>-Double.MAX_VALUE</tt> as a special keyword
+that means "the smallest x or y model coordinate value visible on
+the plot area" and <tt>+Double.MAX_VALUE</tt> to mean "the largest x or y
+model coordinate value visible on the plot area".
+<p>
+
+You can use these special "keyword values" whenever you want to
+position something along the top, right, bottom, or left edges of
+the plot area.
+
+
+<p> <h4> <li>More efficient handling of dynamically
+determined axis limits</h4>
+<p>
+
+Previously, if you used a dynamically determined axis limit (by
+setting the axis min or max to <tt>Double.NaN</tt>) it forced a
+redraw of the associated axis, tick marks, and tick labels, even
+if they did not change.
+
+<p>
+In 2.2, a redraw is only forced if the dynamically determined
+axis limits actually change between updates.
+<p>
+
+<p> <h4> <li>Method to clip anything drawn
+outside of the chart as a whole (including decorations)</h4>
+<p>
+<ul>
+ <li><b><tt>setShowOffDecoratedChartGlyphs</tt></b></li>
+</ul>
+
+<p>
+
+If passed false, anything drawn outside of the chart as a whole
+(including decorations) will be clipped off. The default is true.
+<p>
+
+Note that this new method differs from the earlier
+<tt>setShowOffChartPoints</tt>, which determines if points that
+fall outside of the (smaller) plot area within the chart are
+drawn or not.
+
+<p> <h4> <li>Vertical and Horizontal Bars Align with Gridlines on
+All Four Sides</h4>
+<p>
+
+Previously, vertical bars only aligned perfectly with their
+corresponding gridlines along their top and bottom edges, and
+horizontal bars only aligned with their corresponding gridlines
+along their left and right edges. Alignment of other edges could
+vary depending on roundoff errors.
+
+<p> As of GChart 2.2, these symbols align with their
+corresponding gridlines on all four edges. This change makes it
+easier to build charts with adjacent, interlocking, vertical or
+horizontal bars, without annoying, 1px, round-off-induced gaps.
+
+However, <b>this is a potentially breaking change</b>.
+Specifically, due to these changes, vertical bars get their left
+and right edges (and horizontal bars there top and bottom edges)
+pushed out and extra half pixel.  If the resulting new look is
+unacceptable to you, try decreasing the width of vertical bars,
+or the height of horizontal bars, by 1px.
+
+</ol>
+
+</body>
+
+</html>
+
+

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- GWT Ant Macros for Eclipse (GAME). In other words,
+     an attempt to capture typical Ant boiler-plate
+     for Eclipse-based GWT projects in some Ant macros -->
+
+<project name="game">
+<!-- location of GWT libraries
+
+Note: GChart Eclipse .classpath files, and its ant scripts, assume that you
+have copied the GWT distribution (containing gwt-user.jar, etc.) into a
+"General" Eclipse Project that is stored in a "gwt" subfolder of the trunk.
+Pulling the trunk creates such an empty gwt Eclipse project for you, but you
+still need to copy the GWT distro into it.
+-->
+
+<property name="game.gwt.home" value="gwt" />
+<property name="game.gwt.dev.jar" value="${game.gwt.home}/gwt-dev.jar" />
+<property name="game.gwt.user.jar" value="${game.gwt.home}/gwt-user.jar" />
+
+<!-- assures that javac invokes Eclipse's java compiler -->
+<!-- (requires "run in same JRE as workspace" in ant launch props) -->
+<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter" />
+
+<!-- GWT-related javac parameters settings -->
+<property name="game.gwt.javasourceversion" value="1.5" />
+<property name="game.gwt.javadebuglevel" value="lines,vars,source" />
+
+<!-- standard subfolder names used in most Eclipse projects -->
+<property name="game.sourcefolder" value="src" />
+<property name="game.javacoutput" value="bin" />
+<!-- standard subfolder GWT creates to hold compiled javascript -->
+<property name="game.j2jsoutput" value="www" />
+<!-- standard project subfolder where javadoc tool outputs go -->
+<property name="game.javadocoutput" value="javadoc" />
+<!-- place were GWT stores the temp files it employs -->
+<property name="game.gwtcache" value=".gwt-cache" />
+
+<!-- a javac for a standard Eclipse-layout GWT project -->
+  <macrodef name="game.javac">
+    <attribute name="projectfolder" default="NOT SET"
+     description= "Name of Eclipse project folder to compile" />
+    <attribute name="cpextra" default=""
+     description="Additional items to include in classpath" />
+     <sequential>
+     	 <mkdir dir="@{projectfolder}/${game.javacoutput}" />
+		 <javac srcdir="@{projectfolder}/${game.sourcefolder}"
+            destdir="@{projectfolder}/${game.javacoutput}"
+classpath="@{projectfolder}/${game.sourcefolder}:${projectfolder}/${game.javacompileoutput}:${game.gwt.user.jar}:${game.gwt.dev.jar}:@{cpextra}"
+            debug="true"
+            debuglevel="${game.gwt.javadebuglevel}"
+            source="${game.gwt.javasourceversion}"
+		 	target="${game.gwt.javasourceversion}"
+            nowarn="true"
+            encoding="utf-8" />
+      </sequential>
+  </macrodef>
+
+<!-- invoke GWT hosted mode shell on an Eclipse GWT project-->
+  <macrodef name="game.shell">
+    <attribute name="projectfolder" 
+     default="NOT SET"
+     description="Eclipse project on which to invoke GWTShell" />
+    <attribute name="url" default="NOT SET"
+     description="Url of web page for hosted mode browser to open"/>
+    <attribute name="cpextra" default="" 
+     description="Extra JARs, etc. separated by :"/>
+    <sequential>
+		<java dir="${basedir}"
+          classname="com.google.gwt.dev.GWTShell"
+          classpath="@{projectfolder}/${game.sourcefolder}:${projectfolder}/${game.javacompileoutput}:${game.gwt.user.jar}:${game.gwt.dev.jar}:@{cpextra}"
+          fork="yes"
+          failonerror="true">
+          <jvmarg value="-Xmx128M"  />
+          
+			<arg value="-out" />
+			<arg file="@{projectfolder}/${game.j2jsoutput}" />
+      <arg value="@{url}" />
+		</java>
+    </sequential>
+
+  </macrodef>
+
+<!-- delete Eclipse/GWT project's generated artifacts & temp files --> 
+  <macrodef name="game.clean">
+    <attribute name="projectfolder" default="NOT SET"
+     description="Eclipse project to be cleaned" />
+    <sequential>
+      <delete dir="@{projectfolder}/${game.javacoutput}" />
+      <delete dir="@{projectfolder}/${game.j2jsoutput}" />
+      <delete dir="@{projectfolder}/${game.javadocoutput}" />
+      <delete dir="@{projectfolder}/${game.gwtcache}" />
+    </sequential>
+  </macrodef>
+
+<!-- export an Eclipse-based GWT module as a GWT-formatted JAR-->
+  <macrodef name="game.exportgwtmoduleasjar">
+    <attribute name="projectfolder" default="NOT SET"
+     description="Eclipse project containing the exported module" />
+    <attribute name="title" default="@{projectfolder}"
+     description="Title stored in JAR's manifest file"/>
+    <attribute name="version" default="NOT SET"
+     description="Version stored in JAR's manifest file"/>
+    <attribute name="datetime" default="NOT SET"
+     description="Datetime stored in JAR's manifest file"/>
+    <attribute name="buildnumber" default="NOT SET"
+     description="Build number stored in JAR's manifest file"/>
+    <sequential>
+    <delete file="@{projectfolder}/@{projectfolder}.jar" />	
+    <jar destfile="@{projectfolder}/@{projectfolder}.jar"
+       index="true"
+       duplicate="preserve">
+     <fileset dir="@{projectfolder}/${game.sourcefolder}" 
+              excludes="**/doc-files/**"/>
+     <fileset dir="@{projectfolder}/${game.javacoutput}"/>     
+     <manifest>
+        <attribute name="Title" value="@{title}" />
+        <attribute name="Version" value="@{version}" />
+        <attribute name="Datetime" value="@{datetime}" />
+       	<attribute name="Build" value="@{buildnumber}" />
+     </manifest>
+    </jar>
+  </sequential>
+
+  </macrodef>
+
+<!-- Use GWT Java-to-javascript compiler on an Eclipse project -->
+  <macrodef name="game.gwtcompile">
+    <attribute name="projectfolder" default="NOT SET"
+     description="Eclipse project containing the exported module" />
+    <attribute name="modulename" default="NOT SET"
+     description="GWT module name associated with the project"/>
+    <attribute name="cpextra" default=""
+     description="Extra JARs used when compiling to Javascript" />
+    <attribute name="style" default="OBFUSCATED"
+     description="choices are OBFUSCATED, PRETTY, and DETAILED" />
+     <sequential> 
+				<mkdir dir="@{projectfolder}/${game.j2jsoutput}" />
+				<java dir="@{projectfolder}"
+              classname="com.google.gwt.dev.Compiler"
+              classpath=
+"@{projectfolder}/${game.sourcefolder}:@{projectfolder}/${game.javacoutput}:${game.gwt.user.jar}:${game.gwt.dev.jar}:@{cpextra}"
+              fork="yes"
+              failonerror="true">
+				    <jvmarg value="-Xmx128M"/>
+					<arg value="-war" />
+					<arg file="@{projectfolder}/${game.j2jsoutput}" />
+					<arg value="@{modulename}" />
+					<arg value="-style" />
+					<arg value="@{style}" />
+				</java>
+     </sequential> 
+  </macrodef>
+  
+</project>

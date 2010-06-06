@@ -1,0 +1,712 @@
+
+<html><head>
+<title>Client-side GChart 2.4 Release Notes</title>
+
+<style>
+         body {
+            background-color: white;
+            color: black;
+            margin: 20px;
+            font-family: Arial, sans-serif;
+         }
+  
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<span style="float: right;">
+<small>For downloads, demos, and more
+visit the</small><br><a
+href="http://clientsidegchart.googlecode.com" target="_top"><big><b>
+Client-side GChart Home Page</b></big></a>
+</span>
+<small><small>
+All contributions, conceptual or practical, psuedo or fully
+coded, gratefully acknowledged and properly documented. 
+</small></small>
+
+
+<h3>Client-side GChart 2.4 Release Notes</h3>
+<p>
+
+
+<ol>
+
+<h4> <li>GChart now <tt>SourcesClickEvents</tt></h4>
+<p>
+
+To make things happen when the user clicks on a point, follow
+these steps:
+<p>
+
+<ol>
+
+ <li>Create a class that implements GWT's
+<tt>ClickListener</tt> interface (has an appropriate
+<tt>onClick</tt> method).
+<p>
+
+ <li>Pass an instance of that class to GChart's new
+    <a
+href="../GChart.html#addClickListener(com.google.gwt.user.client.ui.ClickListener)">addClickListener</a> method.
+<p>
+
+ <li>In your object's <tt>onClick</tt> method, the
+<tt>sender</tt> argument will be a reference to the
+<tt>GChart</tt> the
+user clicked on. Use that <tt>GChart</tt>'s <a
+href="../GChart.html#getTouchedPoint()">getTouchedPoint</a>
+method to get a reference to the GChart
+<tt>Point</tt> (it will be <tt>null</tt> if they clicked on nothing)
+that they clicked on.
+<p>
+
+ <li>Implement the code that does whatever you want to happen
+whenever they click on a point (delete the point, display more
+information about the point, popup a modal dialog for editing the
+point or its containing curve, etc.). 
+
+</ol>
+
+<p>
+Read <a
+href="../package-summary.html#GChartExample18a">this Chart Gallery code</a> for a very simple example.
+Or, click on a slice of the <a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_4/com.googlecode.gchart.gchartdemoapp.GChartDemoApp/GChartDemoApp.html">
+live demo's</a>
+editable pie chart for a more realistic one.
+
+
+<p>
+
+
+<h4> <li>Define hover annotations via HTML templates with embedded custom
+parameters</h4>
+
+You can now use arbitrary HTML (not just plain text) in the
+hovertext templates that you pass to GChart's
+<tt>setHovertextTemplate</tt> method. As before, GChart
+automatically replaces any built-in keywords (<tt>${x}</tt>,
+<tt>${y}</tt>, and <tt>${pieSliceSize}</tt>) embedded in such
+templates with appropriately formated values evaluated at the
+hovered over point.
+
+<p>
+
+Also, by implementing the new
+<a
+href="../HoverParameterInterpreter.html">
+HoverParameterInterpreter</a> interface, and passing an
+instance of your class to the
+<tt>setHoverParameterInterpreter</tt> method, you can define
+custom parameter names that can be embedded in these templates
+via the same ant-like syntax as the built-in keywords.  GChart
+will replace these embedded parameters with the HTML snippets
+returned by your <tt>HoverParameterInterpreter</tt>. <p>
+
+
+The sine, cosine, and tangent values displayed when you hover
+over the sine/cosine chart of the <a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_4/com.googlecode.gchart.gchartdemoapp.GChartDemoApp/GChartDemoApp.html">
+live demo</a> are produced via a trigonometric
+<tt>HoverParameterInterpreter</tt>. The Chart Gallery also
+provides <a href="../package-summary.html#GChartExample17">this
+simple example</a>, that defines a custom parameter for including
+the number (positional index) of the hovered over curve in the
+hovertext, and <a
+href="../package-summary.html#GChartExample17a">this more advanced
+example</a> that uses custom parameters to display an
+auto-scrolling, selected-point-centered, table of x,y
+data below the mouse cursor.
+
+<h4> <li>Point Selection "brushes" for each curve</h4>
+
+Each curve now can define a rectangular "brush" via the
+<tt>setBrushHeight</tt> and <tt>setBrushWidth</tt> methods. By
+default, these brushes are always centered on the current mouse
+location.  "Touching" a point (which selects it and pops up its
+hover annotation) occurs when any part of this brush intersects
+with the rectangle in which the point is rendered.
+<p>
+
+The full point
+selection rules, which behave in an appropriately different
+manner for pie slices, can be found in the <a
+href="../GChart.Symbol.html#setBrushHeight(int)">setBrushHeight</a>
+javadocs. For a detailed list of exactly what happens when a point is
+"touched", see the <a
+href="../GChart.html#touch(com.googlecode.gchart.client.GChart.Curve.Point)">
+touch</a> method, which allows you to touch points
+programatically.
+
+<p> Use the <a
+href="../GChart.Symbol.html#setBrushLocation(com.googlecode.gchart.client.GChart.AnnotationLocation)">
+setBrushLocation</a> method to "attach" this brush to the mouse
+at a position other than its center.  Use the <a
+href="../GChart.Symbol.html#setDistanceMetric(double,%20double)">
+setDistanceMetric</a> method to adjust the definition of how far
+away the brush is from the touched point (if more than one point
+touches the brush the one whose center is closest to the mouse
+cursor is selected).  <p>
+
+The <a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_4/com.googlecode.gchart.gchartdemoapp.GChartDemoApp/GChartDemoApp.html">
+live demo's</a> oil price simulation uses different
+"single-sided" brush
+settings for the two main curves on the chart so that one
+curve gets selected when the user's mouse is near the top of
+the plot area, and the other gets selected when it is near the bottom.
+
+<p>
+
+Though this auto-selection-on-hover capability is the best
+new feature of GChart 2.4, ironically, the second best is
+the ability to turn the darn thing off, by invoking <a
+href="../GChart.html#setHoverTouchingEnabled(boolean)">
+<tt>setHoverTouchingEnabled(false)</tt></a>. Doing so forces
+the user to actually click to select (or, more importantly,
+deselect) a point, which in effect turns the GChart into a
+kind of giant radio button group, with the click-selectable
+points playing the role of the radio buttons. For an example
+that exploits this new "single-selection" capability, see
+<a href="../package-summary.html#GChartExample21">
+GChartExample21</a>.
+
+
+<h4> <li>Methods for Controlling Hover Selection Feedback</h4>
+
+By default, GChart will draw a thin gray rectangle around the
+"mouse-touched" point. But you get a lot more choices than that.
+<p>
+
+The <tt>setHoverSelectionBorderColor</tt>,
+<tt>setHoverSelectionBorderWidth</tt>, and
+<tt>setHoverSelectionBackgroundColor</tt> methods allow you to
+place either internal or external borders around the selected
+point, or overwrite it's center region (background) with a
+different color.
+
+<p>
+
+Using the <a
+href="../GChart.Symbol.html#setHoverSelectionSymbolType(com.googlecode.gchart.client.GChart.SymbolType)">setHoverSelectionSymbolType</a> method, you can
+make GChart generate selection feedback <i>as if</i> the selected
+point had a different symbol type. This technique is used to
+substitute a vertical line (by using <tt>XGRIDLINE</tt> as the hover
+selection symbol type) for the selection cursor on the
+sine/cosine
+chart of the
+<a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_4/com.googlecode.gchart.gchartdemoapp.GChartDemoApp/GChartDemoApp.html">
+live demo</a>.
+<p>
+
+You can also control the width and height of the selection
+cursor via <tt>setHoverSelectionWidth</tt> and
+<tt>setHoverSelectionHeight</tt>. You can
+even define the selection cursor via an image URL
+via <tt>setHoverSelectionImageURL</tt>. 
+<p>
+
+
+Finally, to turn selection feedback completely off, there's
+<tt>setHoverSelectionEnabled(false)</tt>.
+
+
+<h4> <li>Methods to Control the Positioning of popup hover
+annotations</h4>
+
+<p>
+By default, GChart positions the popup hover annotations relative
+to the rendering of the hovered over point. Pass the
+<tt>setHoverLocation</tt> method one of the various
+<tt>AnnotationLocation</tt> choices for basic compass-point
+positioning relative to the hovered-over point and then fine-tune
+those initial positions via <tt>setHoverXShift</tt> and
+<tt>setHoverYShift</tt>. Rules and conventions are exactly the
+same as for ordinary annotation positioning via the analogous
+<tt>setAnnotationLocation</tt>, <tt>setAnnotationXShift</tt>, and
+<tt>setAnnotationYShift</tt> methods.
+
+<p>
+
+But there are other options. Pass one of the new
+<tt>ANCHOR_MOUSE*</tt> family of symbol types to the <a
+href="../GChart.Symbol.html#setHoverAnnotationSymbolType(com.googlecode.gchart.client.GChart.SymbolType)">setHoverAnnotationSymbolType</a>
+method to position hover feedback relative to the location of the
+mouse (similarly to how conventional, <tt>setTitle</tt>-based
+hovertext works). Or, pass in one of the existing 9 compass-point
+anchoring symbol types (ANCHOR_NORTH, etc.) to make the hover
+annotation pop up at a fixed location on the chart.
+
+<p>
+Use <tt>setHoverAnnotationEnabled(false)</tt> to turn pop-up
+hover annotations completely off for a curve.
+<p>
+
+On the <a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_4/com.googlecode.gchart.gchartdemoapp.GChartDemoApp/GChartDemoApp.html">
+live demo</a>, the oil simulation chart places its hover feedback
+at two different fixed locations on the chart (depending on which
+curve is selected). The quarterly revenue chart places its
+hover annotation relative to the mouse
+cursor. The sine/cosine example horizontally centers it's hover
+message at the x position of the currently selected point, just
+above the chart's plot area, via the pairing of
+<tt>setHoverAnnotationSymbolType(SymbolType.XGRIDLINE)</tt> with
+<tt>setHoverLocation(AnnotationLocation.NORTH)</tt>.  <p>
+
+
+
+<h4> <li>Widget-based hover annotations via
+<tt>setHoverWidget</tt> and
+<tt>HoverUpdateable</tt></h4>
+
+Any GWT Widget that also implements the new <a
+href="../HoverUpdateable.html">HoverUpdateable</a> interface can
+become a so-called "hover widget".
+
+<p>
+
+That interface has two methods: <tt>hoverUpdate(Point
+hoveredOver)</tt>, that GChart calls whenever the user moves the
+mouse over a new point, and <tt>hoverCleanup(Point
+hoveredAwayFrom)</tt>, that GChart calls whenever a point is
+deleted, or the user moves away from it.  <p>
+
+
+So, if you need to go a step beyond parameterized HTML templates,
+you can use an arbitrary GWT Widget to define a hover annotation.
+You can even arrange things so that the user can interact with
+the hover widget, which can contain buttons, checkboxes, etc.
+This provides an interesting alternative to adding a
+<tt>ClickListener</tt> to the chart. 
+
+<p>
+All of the positioning and selection features mentioned above
+for HTML-based hover annotations work exactly the same way for hover
+widgets, which are just a more elaborate kind of hover annotation.
+<p>
+
+The <a
+href="http://clientsidegchart.googlecode.com/svn/trunk/live-demo/v2_4/com.googlecode.gchart.gchartdemoapp.GChartDemoApp/GChartDemoApp.html">
+live demo</a> uses a secondary, detailed, GChart as this hover
+widget (GCharts are Widgets, and hence can also be "hover
+widgets") to define a "detail pie" that changes as you hover over
+different bars on the quarterly revenue chart. The Chart Gallery
+also contains <a
+href="../package-summary.html#GChartExample18">this simple hover
+widget example</a>, as well as <a
+href="../package-summary.html#GChartExample20a"> this more
+complicated one</a>.
+
+
+<h4> <li>Potentially breaking changes</h4>
+
+<ol>
+
+<li>This version replaces the <tt>setTitle</tt>-based hovertext
+with something much better. But it looks and behaves differently,
+and the <tt>setTitle</tt> hovertext is no longer available. 
+<p>
+
+If you'd like to produce something close to what you had before,
+the simple (but imperfect) workaround is to just wrap a
+call to the new <tt>GChart.formatAsHovertext</tt> method around your
+old hovertext template strings.
+<p>
+
+If you want to go further than that, you can emulate an "at the
+mouse" positioning of popup hover annotations via code such as
+<tt>setHoverAnnotationSymbolType(ANCHOR_MOUSE)</tt>.
+<p>
+
+This is described in more detail in the <a
+href="../GChart.html#formatAsHovertext(java.lang.String)">
+formatAsHovertext</a>
+and
+<a
+href="../GChart.Symbol.html#setHoverAnnotationSymbolType(com.googlecode.gchart.client.GChart.SymbolType)">
+setHoverAnnotationSymbolType</a>
+ javadocs.
+<p>
+
+One feature of the old hovertext you won't be able to recreate
+easily is the "timeout" on the display of hovertext. With the new
+system, the hover annotation remains as long as the mouse is
+"touching" the point. I expect most applications will consider
+this an improvement, though.
+<p>
+
+Finally, if you just really prefer the old,
+<tt>setTitle</tt>-based behaviours, I see no reason why you
+should not be able to reproduce them exactly (have not actually
+tried this particular combination, though) by using a transparent hover widget (via
+<tt>setHoverWidget</tt>), positioned (via
+<tt>setHoverLocation</tt>) and sized appropriately so that it
+covers the rendered points exactly, and then just using that
+hover widget's <tt>setTitle</tt> method. You might have to choose
+a large enough brush size to assure that the transparent hover
+widget pops up before your mouse is actually on top of the hover
+widget.
+
+
+<li><tt>GChart.NAI</tt> not <tt>-1</tt> is now used as the
+the curve not found indicator.
+<p>
+
+The <tt>getCurveIndex</tt> method now
+returns <tt>GChart.NAI</tt> ("Not An Integer") instead of
+<tt>-1</tt>, as its "point not found"
+indicator.  <p>
+
+This change was made to facilitate the (internal) use of negative
+curve indexes to reference GChart's system curves, and also so that
+<tt>GChart.NAI</tt> is consistently used to represent undefined
+integers throughout GChart.  <p>
+
+Workaround: search your code for any <tt>getCurveIndex</tt> usage that
+check for a <tt>-1</tt> return value, and change these tests to
+check for <tt>GChart.NAI</tt> instead. Applications with such
+code are expected to be rare.
+
+<p>
+
+<li><tt>setFillHasHovertext</tt> is deprecated
+(and now does nothing)
+<p>
+
+Previously, GChart allowed you to copy its <tt>setTitle</tt>-based
+hover text strings into elements used to draw continuous or
+dotted connecting lines between sucessive individual data points.
+<p>
+
+The new hover feedback does not provide any popup feedback at all
+on such connecting lines. Reason: it would have complicated hit
+testing to have to handle continuous lines. Plus, it's of
+questionable value to have hover feedback on values that are not
+real data points, but merely interpolated values.
+<p>
+
+If you really need this feature, you can workaround this change
+by generating real data points at the interpolated values, and
+then charting the so-expanded data sequence.
+
+
+<li><tt>HBAR_NEXT, HBAR_PREV, VBAR_NEXT, VBAR_PREV
+   SymbolTypes</tt> deprecated and made synonymous with
+<tt>LINE</tt>
+<p>
+
+The newer <tt>LINE</tt> symbol type can do everything these older
+symbols can do and more. But, these older symbol types were
+unusual in ways that made them hard to support with the new
+hit-testing infrastructure. So, they were made synonymous with
+LINE, and deprecated.  <p>
+
+If you used these symbol types, see the <a
+href="../GChart.SymbolType.html#VBAR_NEXT">VBAR_NEXT</a> javadocs for
+more information. My expectation is that very few used these
+symbol types, since <tt>LINE</tt> has been the preferred approach
+for some time now.
+<p>
+
+<li><tt>setShowOffChartPoints(true)</tt> is now the default
+<p>
+
+Most of my example charts used this setting, so I thought is
+was a better default in that sense.
+<p>
+
+There are also some known bugs that only appear in the
+<tt>setShowOffChartPoints(false)</tt> mode (see below), so I
+though it was better to use as a default a mode that didn't have
+those bugs.  <p>
+
+To workaround this change, just add the line
+<tt>setShowOffChartPoints(false);</tt> at the top of your chart's code.
+
+
+<p>
+
+</ol> <!-- end of potentially breaking changes -->
+
+
+
+<h4> <li>Minor bugfixes and enhancements</h4>
+
+<ol>
+
+<li>New <tt>setHoverFont*</tt> methods 
+<p>
+
+These methods closely correspond to the existing family of
+<tt>setAnnotationFont*</tt> methods, only that they instead
+control the font properties of the new pop-up
+hover annotations facility (described above).
+<p>
+
+<li><tt>formatNumberAsTickLabel</tt> renamed to
+<tt>formatAsTickLabel</tt>
+<p>
+
+I kept typing in the shorter name by mistake, so I figured it was worth
+removing the useless "number" part (it's already got a double
+argument). The old name is still there, but deprecated.
+
+
+<li><tt>getPointIndex</tt> method added
+<p>
+
+This method (similarly to <tt>getCurveIndex</tt>) returns the
+integer index of a given point reference.
+<p>
+
+<li><tt>New removePoint(Point)</tt> and <tt>removeCurve(Curve) methods.</tt>
+<p> 
+
+New convenience methods that remove points or curves from GChart
+given the <tt>Point</tt> or <tt>Curve</tt> references were added.
+Previous versions required you to have the object's integer index
+to perform such deletions.
+<p>
+
+<li>Default upper bounds on widget-based annotation width and
+height have been increased.
+ <p>
+
+The new values are: <p>
+
+<pre>
+  public static final int DEFAULT_WIDGET_WIDTH_UPPERBOUND = 400;
+  public static final int DEFAULT_WIDGET_HEIGHT_UPPERBOUND = 400;
+</pre>
+
+Widgets sized greater than the default upper bound will not be properly
+centered or right justified unless you specify a larger upper
+bound in the arguments passed into the
+<tt>setAnnotationWidget</tt> or
+<tt>setHoverWidget</tt> methods.
+<p>
+
+I increased these defaults so that my example charts could all get
+away with using them. There is a small performance penalty for
+using a larger than required default upper bound.  <p>
+
+
+<li><tt>GChart.formatAsHovertext</tt> method added
+<p>
+
+This method adds a black border and a yellow background to a
+text string passed to it, in order to provide a reasonable
+approximation of <tt>setTitle</tt>-like hover text formatting (Sorry,
+there's no drop shadow. If you've got a neatly formatted
+self-contained HTML snippet that places a drop shadow
+around an arbitrarily sized text string, please send it to
+me and I'll add it to the next release).
+<p>
+
+This method is provided to simplify the transition from the <tt>setTitle</tt>
+based hover text of previous GChart versions. In those versions,
+only single line plain text hovertext templates were supported.
+<p>
+
+In the new version, both HTML and plain text (and, via
+setHoverWidget, GWT Widgets) are allowed. Plain text hovertext
+template, however, now give you plain black text on a transparent
+background, which means that, without modification, hover text
+will look a lot different in the new version.
+
+<p>
+
+By simply wrapping a call to this method around your old plain
+text hovertext template strings (specified via
+<tt>setHovertextTemplate</tt>) you will get something a lot
+closer to what you had in previous versions. Of course, you are
+now free to use any HTML you like in your hovertext template
+string, so you are not limited to what you get with this method.
+<p>
+
+Be sure to prefix your own HTML template strings with
+<tt>&lt;html&gt;</tt> (otherwise, GChart treats them as plain text).
+<p>
+
+<li>New convention: negative border width implies external
+border around symbol
+<p>
+
+For convenience, GChart now interprets negative border widths to mean
+"add a border of that thickness around the outside of the
+symbol--increasing the visual size of the symbol".
+Positive border width continues to imply an internal border that
+does not change the visual symbol size.
+ 
+<p>
+
+These new negative/external borders do not change the symbol's
+size from a hit-testing perspective. The size increases are
+display-only.
+<p>
+
+<li>Inappropriate "cut line" in full pies eliminated
+<p>
+
+An extra, radial, "cut line" could be inappropriately added to full pie slices
+when non-transparent, differently colored, borders and
+backgrounds were specified for the slice. Full-pie special case
+code was added that corrects this problem.
+
+<p>
+
+<li>New <tt>TRANSPARENT_BORDER_COLOR</tt> keyword accepted by
+<tt>setBorderColor</tt>
+<p>
+
+The well known "IE6 makes transparent borders black" problem created an
+IE6-only bug in my hover selection feedback that lead to
+my adding this feature to fix it (and help others in the same
+fix).
+
+<p>
+
+If you'd like to use a transparent border on one of your curve's
+symbols, and don't want it to be black in IE6, or to behave
+differently in FF2 from how it behaves in IE7 (the IE6 thing
+isn't the only cross-browser inconsistency with transparent
+borders) use this keyword instead of the standard CSS
+"transparent" (which you can of course still use if you like).
+<p>
+
+For more information, see the <a
+href="../GChart.html#TRANSPARENT_BORDER_COLOR">TRANSPARENT_BORDER_COLOR</a>
+javadocs.
+<p>
+
+<li>GChart now recognizes the <tt>&lt;tr&gt;</tt> tag as a "line delimiter".
+
+<p> Previously, GChart's heuristic for estimating an upper bound
+on the height associated with an HTML snippet only recognized
+<tt>&lt;br&gt;</tt> and <tt>&lt;li&gt;</tt> as "line delimiters".
+Now, it also recognizes <tt>&lt;tr&gt;</tt>. This change allows
+it to produce reasonable upper bound height estimates for HTML snippets
+that define tables. Thus, you should not have to override these
+defaults using the appropriate arguments of the
+<tt>setAnnotationText</tt> or <tt>setHoverWidget</tt> methods as
+frequently.  <p>
+
+</ol>
+<p>
+
+<h4> <li>Chrome and Firefox 3 added to list of tested browsers</h4>
+<p>
+
+The complete set of browsers we test on before each release is:
+<p>
+
+<ul>
+  <li>IE 6 (in quirks mode) and 7
+  <li>Firefox 2 and 3
+  <li>Google Chrome
+</ul>
+<p>
+
+It's quite likely it works on other browsers, too, but these are
+the only ones we test on. If you have a different browser,
+you can visit our live demo and test page to see for yourself.
+
+<p>
+<h4> <li>Roughly 15% longer update times (The why. And how to speed things up)</h4>
+
+<p>
+GChart organizes points into bins/bands at update time so that
+it can do its hit testing calculations very quickly when the user
+is mousing over your chart.
+<p>
+
+Unfortunately, this step, which requires another pass over all
+the points on the chart, makes updates (very roughly) 15% slower
+(it also requires 1 to 2 integers worth of extra memory per data
+point).  <p>
+
+You can recoup these update time losses by using
+<tt>setHoverSelectionEnabled(false)</tt> and
+<tt>setHoverAnnotationEnabled(false)</tt> to turn each curve's
+hover feedback completely off.
+
+<p>
+
+You can often reduce this performance hit to a minimum, without
+losing your hover feedback, by squeezing all of your chart's
+hover feedback onto a single curve, and disabling hover feedback
+on every other curve.
+
+<p>
+
+Finally, GChart typically runs <i>several times</i>
+faster in FF3 and Chrome than in the older browsers. That should
+help, too. 
+
+<h4> <li>Known bugs not fixed</h4>
+
+Client-side GChart 2.4 has the following known bugs (plus, as
+always, an indeterminate number of unknown bugs), but I decided
+it was better to keep all these hopefully benign parasites in the
+product rather than postponing the release to fix or find them,
+as it's been over three months since the last release. <p>
+
+<ol>
+<p>
+
+<li> Canvas based line charts are drawn behind gridlines, and,
+in general, are not properly interleaved into the z-order
+with the HTML based curves in the expected manner (they are
+always behind any HTML based curves). 
+<p>
+
+<li> Canvas based line curves probably don't draw lines that connect off
+plot points in the expected, "clipped to plot area" manner when
+<tt>setShowOffChartPoints(false)</tt> is in effect (bug found by code
+reading, no test written yet).
+<p>
+
+<li> Non-canvas connecting lines with off-plot-area points may
+suffer from truncation-related errors, visible at the plot area border,
+when the chart is in the <tt>setShowOffChartPoints(false)</tt>
+mode (again, a code-reading bug find, still need to add a test).
+<p>
+
+</ol>
+The recommended workaround for the last two bugs is just to switch into
+<tt>setShowOffChartPoints(true)</tt> mode (which is the default
+with this release). 
+<p>
+
+Some of these bugs are symptoms of the fact that canvas and HTML
+rendering are different enough that I have not yet come up with a
+way to make them play together that feels like the right approach
+for more than a week. If there is another Client-side GChart
+enthusiast out there with ideas on how to integrate canvas
+rendering into the product (whose HTML rendering assumptions
+I'm afraid run rather deep) I'd appreciate hearing from you.  <p>
+
+
+
+
+</ol>
+
+
+
+</ol>
+
+
+
+</body>
+
+</html>
+
+
