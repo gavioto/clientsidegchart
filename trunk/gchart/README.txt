@@ -2,7 +2,7 @@ What's in the gchart-x.x.zip:
 
 o The gchart.jar is in the root folder of the zip. If you
   don't need to access the javadocs off-line, you can just grab
-  this and follow the instructions at http://gchart.googlecode.com
+  this and follow the instructions at http://clientsidegchart.googlecode.com
 
 o All Client-side GChart documentation, including sample code and
   screen shots, is in the javadocs. 
